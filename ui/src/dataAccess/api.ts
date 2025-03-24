@@ -1,4 +1,4 @@
-import ICreateAccountForm from '../interfaces/ICreateAccountForm';
+import ICreateUserForm from '../interfaces/ICreateUserForm';
 
 enum RequestMethod {
     GET = 'GET',
@@ -33,7 +33,7 @@ class ApiClient {
     }
 
     users = {
-        create: (user: ICreateAccountForm) =>
+        create: (user: ICreateUserForm) =>
             this.request('/users', RequestMethod.POST, user.toString()),
     };
 

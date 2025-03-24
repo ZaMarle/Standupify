@@ -1,4 +1,4 @@
-export default interface ICreateAccountForm {
+export default interface ICreateUserForm {
     firstName: string;
     lastName: string;
     email: string;

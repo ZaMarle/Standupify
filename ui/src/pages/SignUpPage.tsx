@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import ICreateAccountForm from '../interfaces/ICreateAccountForm';
+import ICreateUserForm from '../interfaces/ICreateUserForm';
 
 function SignUpPage() {
     const {
@@ -17,12 +17,12 @@ function SignUpPage() {
         handleSubmit,
         formState: { errors },
         watch,
-    } = useForm<ICreateAccountForm>();
+    } = useForm<ICreateUserForm>();
 
     // Watch the password field to compare with confirm password
     const password = watch('password');
 
-    const onSubmit = (data: ICreateAccountForm) => {
+    const onSubmit = (data: ICreateUserForm) => {
         console.log(data);
     };
 
