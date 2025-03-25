@@ -57,6 +57,15 @@ const theme = createTheme({
                 },
             },
         },
+        MuiIconButton: {
+            styleOverrides: {
+                root: {
+                    '&:focus': {
+                        outline: 'none',
+                    },
+                },
+            },
+        },
         MuiAppBar: {
             styleOverrides: {
                 root: {
