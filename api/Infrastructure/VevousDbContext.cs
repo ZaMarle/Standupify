@@ -17,7 +17,7 @@ public class VevousDbContext : DbContext
             entity.Property(e => e.FirstName)
                 .IsRequired()
                 .HasMaxLength(16);
-            entity.Property(e => e.LastNameName)
+            entity.Property(e => e.LastName)
                 .IsRequired()
                 .HasMaxLength(16);
             entity.Property(e => e.Email)

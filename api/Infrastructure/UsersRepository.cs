@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using api.Infrastructure.Entities;
 using api.Models;
 
 namespace api.Infrastructure;
@@ -12,16 +9,33 @@ public interface IUsersRepository
 
 public class UsersRepository
 {
-    public UsersRepository()
+    private readonly VevousDbContext _vevousDbContext;
+    public UsersRepository(VevousDbContext vevousDbContext)
     {
-
+        _vevousDbContext = vevousDbContext;
     }
 
     public async Task CreateUser(CreateUserFormDto createUserFormDto)
     {
-        throw new NotImplementedException();
+        using var transaction = await _vevousDbContext.Database.BeginTransactionAsync();
 
-        // return Task.CompletedTask;
+        try
+        {
+            var user = new User(createUserFormDto.FirstName, createUserFormDto.LastName, createUserFormDto.Email);
+            _vevousDbContext.Add(user);
+            _vevousDbContext.SaveChanges();
+
+            var authUser = new AuthUser(user.Id, createUserFormDto.Password);
+            _vevousDbContext.Add(authUser);
+            _vevousDbContext.SaveChanges();
+
+            transaction.Commit();
+        }
+        catch (Exception)
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
 }
 
