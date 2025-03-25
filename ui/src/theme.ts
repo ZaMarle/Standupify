@@ -32,48 +32,13 @@ const theme = createTheme({
     },
     components: {
         MuiCssBaseline: {
-            //         styleOverrides: `
-            //     input:-webkit-autofill,
-            //     input:-webkit-autofill:hover,
-            //     input:-webkit-autofill:focus,
-            //     input:-webkit-autofill:active {
-            //       box-shadow: 0 0 0px 1000px #121212 inset !important;
-            //       -webkit-text-fill-color: #E4E4E7 !important;
-            //       caret-color: #E4E4E7 !important;
-            //       transition: background-color 5000s ease-in-out 0s !important;
-            //     }
-            //   `,
             styleOverrides: {
-                // '@global': {
-                //     'input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active':
-                //         {
-                //             boxShadow:
-                //                 '0 0 0px 1000px #121212 inset !important',
-                //             WebkitTextFillColor: '#E4E4E7 !important',
-                //             caretColor: '#E4E4E7 !important',
-                //             transition:
-                //                 'background-color 5000s ease-in-out 0s !important',
-                //         },
-                // },
                 body: {
                     backgroundColor: '#121212', // Force the background color globally
                     color: '#E4E4E7',
                 },
             },
-            // },
         },
-        // MuiInputBase: {
-        //     styleOverrides: {
-        //         input: {
-        //             '&:-webkit-autofill': {
-        //                 WebkitBoxShadow: '0 0 0 100px #121212 inset', // Match background
-        //                 WebkitTextFillColor: '#E4E4E7', // Text color to match your theme
-        //                 caretColor: '#E4E4E7', // Caret color fix
-        //                 borderRadius: 'inherit',
-        //             },
-        //         },
-        //     },
-        // },
         MuiDrawer: {
             styleOverrides: {
                 paper: {
