@@ -99,7 +99,12 @@ function SignUpPage() {
                             type="text"
                             sx={{ width: '100%' }}
                             {...register('firstName', {
-                                required: 'First name is required', // Validation rule
+                                required: 'First name is required',
+                                maxLength: {
+                                    value: 16,
+                                    message:
+                                        'First name cannot exceed 16 characters',
+                                },
                             })}
                             error={!!errors.firstName} // Show error styling when error exists
                             helperText={errors.firstName?.message?.toString()} // Display the error message
@@ -111,6 +116,11 @@ function SignUpPage() {
                             sx={{ mt: 2, width: '100%' }}
                             {...register('lastName', {
                                 required: 'Last name is required',
+                                maxLength: {
+                                    value: 16,
+                                    message:
+                                        'First name cannot exceed 16 characters',
+                                },
                             })}
                             error={!!errors.lastName}
                             helperText={errors.lastName?.message?.toString()}
@@ -125,6 +135,11 @@ function SignUpPage() {
                                 pattern: {
                                     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
                                     message: 'Invalid email format',
+                                },
+                                maxLength: {
+                                    value: 254,
+                                    message:
+                                        'First name cannot exceed 16 characters',
                                 },
                             })}
                             error={!!errors.email}
@@ -143,7 +158,7 @@ function SignUpPage() {
                                         'Password must be at least 8 characters',
                                 },
                                 maxLength: {
-                                    value: 20,
+                                    value: 32,
                                     message:
                                         'Password must be less than 20 characters',
                                 },

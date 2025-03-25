@@ -3,14 +3,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//
+// Connect to Db
 var password = builder.Configuration["DbPassword"];
-var connectionString = builder.Configuration.GetConnectionString("VevousDb").Replace("{DbPassword}", password);
-
-builder.Services.AddDbContext<VevousDbContext>(options =>
-    options.UseNpgsql(connectionString));
+var connectionString = builder.Configuration.GetConnectionString("VevousDb").Replace("VevousDbPasswordPlaceholder", password);
 
 // Add services to the container.
+builder.Services.AddDbContext<VevousDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
