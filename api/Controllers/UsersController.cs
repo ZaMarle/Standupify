@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
+using api.Infrastructure;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace api.Controllers
 {
@@ -13,17 +9,26 @@ namespace api.Controllers
     public class UsersController : Controller
     {
         private readonly ILogger<UsersController> _logger;
+        private readonly IUsersRepository _usersRepository;
 
-        public UsersController(ILogger<UsersController> logger)
+        public UsersController(ILogger<UsersController> logger, IUsersRepository usersRepository)
         {
             _logger = logger;
+            _usersRepository = usersRepository;
         }
 
         [HttpPost("CreateUser")]
-        public IActionResult CreateUser([FromBody] CreateUserFormDto CreateAccountForm)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserFormDto CreateAccountForm)
         {
-
-            return Ok();
+            try
+            {
+                await _usersRepository.CreateUser(CreateAccountForm);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }

@@ -1,4 +1,14 @@
+using api.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+//
+var password = builder.Configuration["DbPassword"];
+var connectionString = builder.Configuration.GetConnectionString("VevousDb").Replace("{DbPassword}", password);
+
+builder.Services.AddDbContext<VevousDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // Add services to the container.
 

@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 using api.Models;
 
 namespace api.Infrastructure;
+public interface IUsersRepository
+{
+    Task CreateUser(CreateUserFormDto createUserFormDto);
+}
+
 public class UsersRepository
 {
     public UsersRepository()
@@ -14,9 +19,9 @@ public class UsersRepository
 
     public async Task CreateUser(CreateUserFormDto createUserFormDto)
     {
+        throw new NotImplementedException();
 
-
-        return Ok();
+        // return Task.CompletedTask;
     }
 }
 
