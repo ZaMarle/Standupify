@@ -1,4 +1,6 @@
+import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
+import { ok, err, Result } from '../utils/Result';
 
 enum RequestMethod {
     GET = 'GET',
@@ -11,34 +13,39 @@ export default class ApiClient {
     private baseUrl: string;
 
     constructor() {
-        if (!process.env.VEVOUS_API_BASE_URL) {
+        if (!import.meta.env.VITE_VEVOUS_API_BASE_URL) {
             throw new Error('Env variable not defined: VEVOUS_API_BASE_URL');
         }
 
-        this.baseUrl = process.env.VEVOUS_API_BASE_URL;
+        this.baseUrl = import.meta.env.VITE_VEVOUS_API_BASE_URL;
     }
 
     private async request<T>(
         endpoint: string,
         method: RequestMethod,
         body?: string,
-    ): Promise<T> {
-        const res = await fetch(`${this.baseUrl}${endpoint}`, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
-            body: body ? JSON.stringify(body) : undefined,
-        });
+    ): Promise<Result<T, string>> {
+        try {
+            const res = await fetch(`${this.baseUrl}${endpoint}`, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: body ? JSON.stringify(body) : undefined,
+            });
 
-        if (!res.ok) {
-            throw new Error(`error{}`);
+            return ok(await res.json());
+        } catch (e) {
+            return err(`api request error: ${e}`);
         }
-
-        return res.json();
     }
 
     users = {
         create: (user: ICreateUserForm) =>
             this.request('/users', RequestMethod.POST, user.toString()),
+    };
+
+    teams = {
+        create: (team: ICreateTeamForm) =>
+            this.request('/teams', RequestMethod.POST, team.toString()),
     };
 
     // users = {

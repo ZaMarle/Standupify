@@ -4,7 +4,16 @@
         { "path": "./tsconfig.app.json" },
         { "path": "./tsconfig.node.json" }
     ],
+    // "compilerOptions": {
+    //     "noImplicitAny": false // This will prevent the error for implicit 'any' types
+    // }
     "compilerOptions": {
-        "noImplicitAny": false // This will prevent the error for implicit 'any' types
+        "strict": true,
+        "noImplicitAny": true, // Ensure implicit `any` is not allowed
+        "strictNullChecks": true,
+        "strictFunctionTypes": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "alwaysStrict": true
     }
 }
