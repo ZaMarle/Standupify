@@ -1,34 +1,31 @@
-using System.Threading.Tasks;
 using api.Infrastructure;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace api.Controllers
+namespace api.Controllers;
+[Route("[controller]")]
+public class UsersController : Controller
 {
-    [Route("[controller]")]
-    public class UsersController : Controller
+    private readonly ILogger<UsersController> _logger;
+    private readonly IUsersRepository _usersRepository;
+
+    public UsersController(ILogger<UsersController> logger, IUsersRepository usersRepository)
     {
-        private readonly ILogger<UsersController> _logger;
-        private readonly IUsersRepository _usersRepository;
+        _logger = logger;
+        _usersRepository = usersRepository;
+    }
 
-        public UsersController(ILogger<UsersController> logger, IUsersRepository usersRepository)
+    [HttpPost("CreateUser")]
+    public async Task<IActionResult> CreateUser([FromBody] CreateUserFormDto CreateAccountForm)
+    {
+        try
         {
-            _logger = logger;
-            _usersRepository = usersRepository;
+            await _usersRepository.CreateUser(CreateAccountForm);
+            return Ok();
         }
-
-        [HttpPost("CreateUser")]
-        public async Task<IActionResult> CreateUser([FromBody] CreateUserFormDto CreateAccountForm)
+        catch
         {
-            try
-            {
-                await _usersRepository.CreateUser(CreateAccountForm);
-                return Ok();
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            return BadRequest();
         }
     }
 }

@@ -8,6 +8,8 @@ public class VevousDbContext : DbContext
 
     public DbSet<AuthUser> AuthUsers { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Team> Teams { get; set; }
+    public DbSet<Standup> Standups { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,7 +40,66 @@ public class VevousDbContext : DbContext
                 .IsRequired()
                 .HasMaxLength(32);
 
+            // Foreign key relation
+            entity.HasOne<User>()
+                .WithOne()
+                .HasForeignKey<AuthUser>(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             entity.ToTable("AuthUsers");
+        });
+
+        modelBuilder.Entity<Team>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(64);
+            entity.Property(e => e.Description)
+                .IsRequired()
+                .HasMaxLength(255);
+            entity.Property(e => e.CreatedById)
+                .IsRequired();
+            entity.Property(e => e.CreatedDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Foreign key relation
+            entity.HasOne<User>()
+                .WithOne() // Assuming 1-to-1 relationship
+                .HasForeignKey<Team>(a => a.CreatedById)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.ToTable("Team");
+        });
+
+        modelBuilder.Entity<Standup>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+            entity.Property(e => e.Yesterday)
+                .IsRequired()
+                .HasMaxLength(255);
+            entity.Property(e => e.Today)
+                .IsRequired()
+                .HasMaxLength(255);
+            entity.Property(e => e.Blockers)
+                .IsRequired()
+                .HasMaxLength(255);
+            entity.Property(e => e.CreatedById)
+                .IsRequired();
+            entity.Property(e => e.CreatedDate)
+                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+            // Foreign key relation
+            entity.HasOne<User>()
+                .WithOne() // Assuming 1-to-1 relationship
+                .HasForeignKey<Standup>(a => a.CreatedById)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.ToTable("Standup");
         });
     }
 }

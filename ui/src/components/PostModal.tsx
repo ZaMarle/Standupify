@@ -1,21 +1,16 @@
 import { Box, Button, Modal, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
+import ICreateStandupForm from '../interfaces/ICreateStandupForm';
 
 interface PostModalProps {
     open: boolean;
     handleClose: () => void;
 }
 
-interface IStandupForm {
-    blockers: string;
-    today: string;
-    yesterday: string;
-}
-
 function PostModal({ open, handleClose }: PostModalProps) {
-    const { register, handleSubmit } = useForm<IStandupForm>();
+    const { register, handleSubmit } = useForm<ICreateStandupForm>();
 
-    const onSubmit = (data: IStandupForm) => {
+    const onSubmit = (data: ICreateStandupForm) => {
         console.log(data);
     };
 
