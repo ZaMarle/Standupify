@@ -38,7 +38,7 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
                     width: 400,
                     bgcolor: 'background.paper',
                     boxShadow: 24,
-                    p: 4,
+                    p: 2,
                     borderRadius: '8px',
                 }}
             >

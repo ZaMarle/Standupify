@@ -6,6 +6,8 @@ import {
     Container,
     AppBar,
     Toolbar,
+    CardContent,
+    Card,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -36,10 +38,7 @@ const SignInPage = () => {
                 height: '100%',
             }}
         >
-            <AppBar
-                position="static"
-                style={{ boxShadow: 'none', backgroundColor: '#fff' }}
-            >
+            <AppBar position="static">
                 <Toolbar>
                     <Typography
                         variant="h6"
@@ -47,12 +46,12 @@ const SignInPage = () => {
                         component="div"
                         sx={{
                             flexGrow: 1,
-                            color: '#1976d2',
+                            color: '#fff',
                             cursor: 'pointer',
                         }}
                         onClick={() => navigate('/')}
                     >
-                        Standupify
+                        Vevous
                     </Typography>
                     <Button
                         onClick={() => navigate('/signup')}
@@ -70,23 +69,12 @@ const SignInPage = () => {
                     alignContent: 'center',
                 }}
             >
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        marginTop: 4,
-                        padding: 2,
-                        borderRadius: 2,
-                        boxShadow: 3,
-                    }}
-                >
-                    <Typography
-                        sx={{ alignSelf: 'baseline', mb: 2 }}
-                        variant="h6"
-                    >
-                        Sign in to Standupify
+                <Card sx={{ width: '100%', padding: 2 }}>
+                    <Typography sx={{ alignSelf: 'baseline' }} variant="h6">
+                        Sign in to Vevous
                     </Typography>
+
+                    <CardContent></CardContent>
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         style={{ width: '100%' }}
@@ -146,7 +134,7 @@ const SignInPage = () => {
                                 </span>
                             </Grid> */}
                     </form>
-                </Box>
+                </Card>
             </Container>
         </div>
     );

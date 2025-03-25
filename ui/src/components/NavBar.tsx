@@ -68,7 +68,7 @@ function NavBar() {
                         }}
                         onClick={() => navigate('/')}
                     >
-                        Standupify
+                        Vevous
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -126,7 +126,7 @@ function NavBar() {
                         }}
                         onClick={() => navigate('/')}
                     >
-                        Standupify
+                        Vevous
                     </Typography>
                     <div style={{ marginLeft: 'auto' }}>
                         <IconButton

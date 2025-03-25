@@ -1,5 +1,7 @@
 import { createContext, useState, useContext, ReactNode } from 'react';
 
+const signedIn = false;
+
 // Define the shape of the context value
 interface AuthContextType {
     isSignedIn: boolean;
@@ -9,7 +11,7 @@ interface AuthContextType {
 
 // Provide a default value for the context
 const defaultAuthContext: AuthContextType = {
-    isSignedIn: true,
+    isSignedIn: signedIn,
     signIn: () => {},
     signOut: () => {},
 };
@@ -28,7 +30,7 @@ interface AuthProviderProps {
 
 // AuthProvider component that will wrap the entire app
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [isSignedIn, setIsSignedIn] = useState(true);
+    const [isSignedIn, setIsSignedIn] = useState(signedIn);
 
     const signIn = () => setIsSignedIn(true);
     const signOut = () => setIsSignedIn(false);

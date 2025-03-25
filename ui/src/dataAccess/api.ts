@@ -7,11 +7,15 @@ enum RequestMethod {
     DELETE = 'DELETE',
 }
 
-class ApiClient {
+export default class ApiClient {
     private baseUrl: string;
 
-    constructor(baseUrl: string) {
-        this.baseUrl = baseUrl;
+    constructor() {
+        if (!process.env.VEVOUS_API_BASE_URL) {
+            throw new Error('Env variable not defined: VEVOUS_API_BASE_URL');
+        }
+
+        this.baseUrl = process.env.VEVOUS_API_BASE_URL;
     }
 
     private async request<T>(

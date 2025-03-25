@@ -2,6 +2,7 @@ import {
     AppBar,
     Box,
     Button,
+    Card,
     Container,
     TextField,
     Toolbar,
@@ -10,6 +11,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
+import ApiClient from '../dataAccess/api';
 
 function SignUpPage() {
     const {
@@ -24,6 +26,8 @@ function SignUpPage() {
 
     const onSubmit = (data: ICreateUserForm) => {
         console.log(data);
+        const apiClient = new ApiClient();
+        apiClient.users.create(data);
     };
 
     const navigate = useNavigate();
@@ -36,10 +40,7 @@ function SignUpPage() {
                 height: '100%',
             }}
         >
-            <AppBar
-                position="static"
-                style={{ boxShadow: 'none', backgroundColor: '#fff' }}
-            >
+            <AppBar position="static">
                 <Toolbar>
                     <Typography
                         variant="h6"
@@ -47,12 +48,12 @@ function SignUpPage() {
                         component="div"
                         sx={{
                             flexGrow: 1,
-                            color: '#1976d2',
+                            color: '#fff',
                             cursor: 'pointer',
                         }}
                         onClick={() => navigate('/')}
                     >
-                        Standupify
+                        Vevous
                     </Typography>
                     <Button
                         onClick={() => navigate('/signin')}
@@ -71,17 +72,7 @@ function SignUpPage() {
                     alignContent: 'center',
                 }}
             >
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        marginTop: 4,
-                        padding: 2,
-                        borderRadius: 2,
-                        boxShadow: 3,
-                    }}
-                >
+                <Card sx={{ width: '100%', padding: 2 }}>
                     <Typography
                         sx={{ alignSelf: 'baseline', mb: 2 }}
                         variant="h6"
@@ -162,11 +153,11 @@ function SignUpPage() {
                                     message:
                                         'Password must be less than 20 characters',
                                 },
-                                pattern: {
-                                    value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
-                                    message:
-                                        'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
-                                },
+                                // pattern: {
+                                //     value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/,
+                                //     message:
+                                //         'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+                                // },
                             })}
                             error={!!errors.password}
                             helperText={errors.password?.message?.toString()}
@@ -198,7 +189,7 @@ function SignUpPage() {
                             </Button>
                         </div>
                     </form>
-                </Box>
+                </Card>
             </Container>
         </div>
     );
