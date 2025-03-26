@@ -8,6 +8,7 @@ public class Standup
     public string Today { get; set; }
     public string Blockers { get; set; }
     public int CreatedById { get; set; }
+    public List<int> TeamId { get; set; }
     public DateTime CreatedDate { get; set; }
 
     public Standup(string yesterday, string today, string blockers)

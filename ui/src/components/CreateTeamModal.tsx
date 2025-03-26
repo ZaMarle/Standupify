@@ -2,6 +2,8 @@ import {
     Alert,
     Box,
     Button,
+    Card,
+    Container,
     Fade,
     Modal,
     Slide,
@@ -92,7 +94,7 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
                 aria-labelledby="modal-modal-title"
                 aria-describedby="modal-modal-description"
             >
-                <Box
+                <Card
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -100,7 +102,6 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
                         transform: 'translate(-50%, -50%)',
                         width: 400,
                         bgcolor: 'background.paper',
-                        boxShadow: 24,
                         p: 2,
                         borderRadius: '8px',
                     }}
@@ -148,7 +149,7 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
                             </Button>
                         </div>
                     </form>
-                </Box>
+                </Card>
             </Modal>
         </>
     );

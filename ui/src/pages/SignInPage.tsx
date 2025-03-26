@@ -1,12 +1,10 @@
 import {
     TextField,
     Button,
-    Box,
     Typography,
     Container,
     AppBar,
     Toolbar,
-    CardContent,
     Card,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -70,11 +68,14 @@ const SignInPage = () => {
                 }}
             >
                 <Card sx={{ width: '100%', padding: 2 }}>
-                    <Typography sx={{ alignSelf: 'baseline' }} variant="h6">
+                    <Typography
+                        sx={{ alignSelf: 'baseline', mb: 2 }}
+                        variant="h6"
+                    >
                         Sign in to Vevous
                     </Typography>
 
-                    <CardContent></CardContent>
+                    {/* <CardContent> */}
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         style={{ width: '100%' }}
@@ -108,7 +109,6 @@ const SignInPage = () => {
                                 variant="contained"
                                 color="primary"
                                 fullWidth
-                                sx={{ padding: '10px' }}
                             >
                                 Sign in
                             </Button>
@@ -134,6 +134,7 @@ const SignInPage = () => {
                                 </span>
                             </Grid> */}
                     </form>
+                    {/* </CardContent> */}
                 </Card>
             </Container>
         </div>

@@ -17,7 +17,7 @@ import {
 import Grid from '@mui/material/Grid2';
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
-import PostModal from './PostModal';
+import CreateStandupModal from './CreateStandupModal';
 import CreateTeamModal from './CreateTeamModal';
 
 function NavBar() {
@@ -89,7 +89,7 @@ function NavBar() {
 
     return (
         <>
-            <PostModal
+            <CreateStandupModal
                 open={openPostModal}
                 handleClose={handleClosePostModal}
             />

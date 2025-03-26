@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Connect to Db
-var password = builder.Configuration["DbPassword"];
+var password = builder.Configuration["VevousDbPassword"];
 var connectionString = builder.Configuration.GetConnectionString("VevousDb").Replace("VevousDbPasswordPlaceholder", password);
 
 // Add services to the container.

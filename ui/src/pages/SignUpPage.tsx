@@ -183,7 +183,6 @@ function SignUpPage() {
                                 variant="contained"
                                 color="primary"
                                 fullWidth
-                                sx={{ padding: '10px' }}
                             >
                                 Create Account
                             </Button>

@@ -1,4 +1,4 @@
-import { Box, Button, Modal, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, Modal, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 
 interface IInviteToTeamModalProps {
@@ -33,7 +33,7 @@ function InviteToTeamModal({
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Box
+            <Card
                 sx={{
                     position: 'absolute',
                     top: '50%',
@@ -41,7 +41,6 @@ function InviteToTeamModal({
                     transform: 'translate(-50%, -50%)',
                     width: 400,
                     bgcolor: 'background.paper',
-                    boxShadow: 24,
                     p: 2,
                     borderRadius: '8px',
                 }}
@@ -81,7 +80,7 @@ function InviteToTeamModal({
                         </Button>
                     </div>
                 </form>
-            </Box>
+            </Card>
         </Modal>
     );
 }

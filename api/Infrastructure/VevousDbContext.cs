@@ -67,7 +67,7 @@ public class VevousDbContext : DbContext
 
             // Foreign key relation
             entity.HasOne<User>()
-                .WithOne() // Assuming 1-to-1 relationship
+                .WithOne()
                 .HasForeignKey<Team>(a => a.CreatedById)
                 .OnDelete(DeleteBehavior.Cascade);
 
@@ -95,7 +95,7 @@ public class VevousDbContext : DbContext
 
             // Foreign key relation
             entity.HasOne<User>()
-                .WithOne() // Assuming 1-to-1 relationship
+                .WithOne()
                 .HasForeignKey<Standup>(a => a.CreatedById)
                 .OnDelete(DeleteBehavior.Cascade);
 

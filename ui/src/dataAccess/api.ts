@@ -39,6 +39,8 @@ export default class ApiClient {
     }
 
     users = {
+        getTeams: (userId: number) =>
+            this.request(`/users/${userId}/teams`, RequestMethod.GET),
         create: (user: ICreateUserForm) =>
             this.request('/users', RequestMethod.POST, user.toString()),
     };
