@@ -1,7 +1,7 @@
 using api.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace api.Infrastructure;
+namespace api.Infrastructure.Repos;
 public interface ITeamMembershipsRepository
 {
     Task<IEnumerable<TeamMembership>> GetUserMemberships(int userId);

@@ -1,6 +1,5 @@
 import {
     AppBar,
-    Box,
     Button,
     Card,
     Container,
@@ -47,7 +46,6 @@ function SignUpPage() {
                         fontWeight="bold"
                         component="div"
                         sx={{
-                            flexGrow: 1,
                             color: '#fff',
                             cursor: 'pointer',
                         }}
@@ -56,6 +54,7 @@ function SignUpPage() {
                         Vevous
                     </Typography>
                     <Button
+                        style={{ marginLeft: 'auto' }}
                         onClick={() => navigate('/signin')}
                         type="submit"
                         variant="contained"

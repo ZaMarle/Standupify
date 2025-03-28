@@ -1,5 +1,7 @@
 using api.Infrastructure;
+using api.Infrastructure.Repos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +30,16 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "My API",
+        Version = "v1"
+    });
+});
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -43,6 +55,17 @@ app.UseHttpsRedirection();
 
 // Use CORS
 app.UseCors("AllowSpecificOrigin");
+
+// Enable Swagger middleware
+if (app.Environment.IsDevelopment()) // Only enable in development
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        options.RoutePrefix = string.Empty; // Access at root (localhost:5000)
+    });
+}
 
 app.UseAuthorization();
 

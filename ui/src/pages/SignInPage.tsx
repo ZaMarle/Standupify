@@ -43,7 +43,6 @@ const SignInPage = () => {
                         fontWeight="bold"
                         component="div"
                         sx={{
-                            flexGrow: 1,
                             color: '#fff',
                             cursor: 'pointer',
                         }}
@@ -52,6 +51,7 @@ const SignInPage = () => {
                         Vevous
                     </Typography>
                     <Button
+                        style={{ marginLeft: 'auto' }}
                         onClick={() => navigate('/signup')}
                         type="submit"
                         variant="contained"

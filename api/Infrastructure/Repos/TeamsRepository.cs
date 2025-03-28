@@ -1,7 +1,7 @@
 using api.Infrastructure.Entities;
 using api.Models;
 
-namespace api.Infrastructure;
+namespace api.Infrastructure.Repos;
 public interface ITeamsRepository
 {
     Task CreateTeam(CreateTeamFormDto CreateTeamForm);

@@ -26,11 +26,16 @@ export default class ApiClient {
         body?: string,
     ): Promise<Result<T, string>> {
         try {
-            const res = await fetch(`${this.baseUrl}${endpoint}`, {
+            const url = `${this.baseUrl}${endpoint}`;
+            const query = {
                 method,
                 headers: { 'Content-Type': 'application/json' },
                 body: body ? JSON.stringify(body) : undefined,
-            });
+            };
+
+            console.log(query);
+
+            const res = await fetch(url, query);
 
             return ok(await res.json());
         } catch (e) {
@@ -42,7 +47,7 @@ export default class ApiClient {
         getTeams: (userId: number) =>
             this.request(`/users/${userId}/teams`, RequestMethod.GET),
         create: (user: ICreateUserForm) =>
-            this.request('/users', RequestMethod.POST, user.toString()),
+            this.request('/users', RequestMethod.POST, JSON.stringify(user)),
     };
 
     teams = {
