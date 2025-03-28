@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Infrastructure;
@@ -12,9 +13,11 @@ using api.Infrastructure;
 namespace api.Migrations
 {
     [DbContext(typeof(VevousDbContext))]
-    partial class VevousDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250327122932_AddTeamMembership")]
+    partial class AddTeamMembership
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -135,26 +138,16 @@ namespace api.Migrations
                     b.Property<int>("TeamId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("TeamId1")
-                        .HasColumnType("integer");
-
                     b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("UserId1")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TeamId");
 
-                    b.HasIndex("TeamId1");
-
                     b.HasIndex("UserId");
 
-                    b.HasIndex("UserId1");
-
-                    b.ToTable("TeamMembership", (string)null);
+                    b.ToTable("TeamMembership");
                 });
 
             modelBuilder.Entity("api.Infrastructure.Entities.User", b =>
@@ -220,23 +213,11 @@ namespace api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("api.Infrastructure.Entities.Team", "Team")
-                        .WithMany()
-                        .HasForeignKey("TeamId1");
-
                     b.HasOne("api.Infrastructure.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("api.Infrastructure.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId1");
-
-                    b.Navigation("Team");
-
-                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

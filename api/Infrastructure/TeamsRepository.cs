@@ -7,7 +7,7 @@ public interface ITeamsRepository
     Task CreateTeam(CreateTeamFormDto CreateTeamForm);
 }
 
-public class TeamsRepository
+public class TeamsRepository : ITeamsRepository
 {
     private readonly VevousDbContext _vevousDbContext;
 

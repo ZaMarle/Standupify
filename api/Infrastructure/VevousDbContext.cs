@@ -10,6 +10,7 @@ public class VevousDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Standup> Standups { get; set; }
+    public DbSet<TeamMembership> TeamMemberships { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -100,6 +101,31 @@ public class VevousDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.ToTable("Standup");
+        });
+
+        modelBuilder.Entity<TeamMembership>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.TeamId)
+                .IsRequired();
+
+            entity.HasOne<Team>()
+                .WithMany()
+                .HasForeignKey(e => e.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.UserId)
+                .IsRequired();
+
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.ToTable("TeamMembership");
         });
     }
 }

@@ -14,15 +14,9 @@ import {
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import ICreateStandupForm from '../interfaces/ICreateStandupForm';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import ApiClient from '../dataAccess/api';
 import Team from '../models/Team';
-
-const teams = [
-    { id: 1, name: 'Software Development' },
-    { id: 2, name: 'Systems' },
-    { id: 3, name: 'Engineering' },
-];
 
 interface CreateStandupModalProps {
     open: boolean;
@@ -45,21 +39,29 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
                 today: '',
                 yesterday: '',
                 teamIds: new Array<number>(),
-                // teams: new Array<Team>(),
             });
         }
     }, [open, reset]);
 
     // Fetch team for dropdown
+    const [teams, setTeams] = useState<Array<Team>>([]);
     useEffect(() => {
-        const apiClient = new ApiClient();
-        apiClient.users.getTeams(1).then((res) => {
-            console.log('unwrapping res');
-            if (res.kind == 'ok') {
-                console.log(res.value);
-            }
-        });
-    });
+        if (open) {
+            const apiClient = new ApiClient();
+            apiClient.users.getTeams(1).then((res) => {
+                console.log('unwrapping res');
+                if (res.kind == 'ok') {
+                    console.log(res.value);
+
+                    setTeams([
+                        { id: 1, name: 'Software Development' },
+                        { id: 2, name: 'Systems' },
+                        { id: 3, name: 'Engineering' },
+                    ]);
+                }
+            });
+        }
+    }, [open]);
 
     return (
         <Modal
@@ -116,7 +118,7 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
                     />
                     <FormControl sx={{ mt: 2, width: '100%' }}>
                         <InputLabel id="demo-multiple-checkbox-label">
-                            Tag
+                            Teams
                         </InputLabel>
                         <Controller
                             name="teamIds"
@@ -129,15 +131,19 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
                                     id="demo-multiple-checkbox"
                                     multiple
                                     input={<OutlinedInput label="Tag" />}
-                                    renderValue={(selected) =>
-                                        selected.join(', ')
+                                    renderValue={
+                                        (selected) =>
+                                            teams
+                                                .filter((t) =>
+                                                    selected.includes(t.id),
+                                                )
+                                                .map((t) => t.name)
+                                                .join(', ')
+                                        // selected.join(', ')
                                     }
                                 >
                                     {teams.map((team) => (
-                                        <MenuItem
-                                            key={team.id}
-                                            value={team.name}
-                                        >
+                                        <MenuItem key={team.id} value={team.id}>
                                             <Checkbox
                                                 checked={field.value.includes(
                                                     team.id,

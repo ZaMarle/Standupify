@@ -7,7 +7,7 @@ public interface IUsersRepository
     Task CreateUser(CreateUserFormDto createUserFormDto);
 }
 
-public class UsersRepository
+public class UsersRepository : IUsersRepository
 {
     private readonly VevousDbContext _vevousDbContext;
     public UsersRepository(VevousDbContext vevousDbContext)
