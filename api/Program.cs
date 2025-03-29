@@ -1,9 +1,19 @@
 using api.Infrastructure;
 using api.Infrastructure.Repos;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.Authority = "https://localhost:7250/"; // URL for your identity provider
+        options.Audience = "http://localhost:5173/signup"; // Audience, usually your API identifier
+        // options.RequireHttpsMetadata = false; // For development, set this to true in production
+    });
 
 // Connect to Db
 var password = builder.Configuration["VevousDbPassword"];
@@ -67,7 +77,8 @@ if (app.Environment.IsDevelopment()) // Only enable in development
     });
 }
 
-app.UseAuthorization();
+app.UseAuthentication();  // Ensure authentication middleware is in place
+app.UseAuthorization();   // Authorization would typically be added if you need it
 
 app.MapControllers();
 

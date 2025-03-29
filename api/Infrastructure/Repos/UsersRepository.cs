@@ -1,10 +1,13 @@
+using api.Helper;
 using api.Infrastructure.Entities;
 using api.Models;
+using Microsoft.AspNetCore.Identity;
+using Npgsql;
 
 namespace api.Infrastructure.Repos;
 public interface IUsersRepository
 {
-    Task CreateUser(CreateUserFormDto createUserFormDto);
+    Task<Result<Unit>> CreateUser(CreateUserFormDto createUserFormDto);
 }
 
 public class UsersRepository : IUsersRepository
@@ -15,7 +18,7 @@ public class UsersRepository : IUsersRepository
         _vevousDbContext = vevousDbContext;
     }
 
-    public async Task CreateUser(CreateUserFormDto createUserFormDto)
+    public async Task<Result<Unit>> CreateUser(CreateUserFormDto createUserFormDto)
     {
         using var transaction = await _vevousDbContext.Database.BeginTransactionAsync();
 
@@ -23,19 +26,44 @@ public class UsersRepository : IUsersRepository
         {
             var user = new User(createUserFormDto.FirstName, createUserFormDto.LastName, createUserFormDto.Email);
             _vevousDbContext.Add(user);
-            _vevousDbContext.SaveChanges();
+            await _vevousDbContext.SaveChangesAsync();
 
             var authUser = new AuthUser(user.Id, createUserFormDto.Password);
-            _vevousDbContext.Add(authUser);
-            _vevousDbContext.SaveChanges();
 
-            transaction.Commit();
+            var passwordHasher = new PasswordHasher<AuthUser>();
+            var hashedPassword = passwordHasher.HashPassword(authUser, createUserFormDto.Password);
+
+            authUser.Password = hashedPassword;
+
+            _vevousDbContext.Add(authUser);
+            await _vevousDbContext.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            return Result<Unit>.Ok(new Unit());
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            transaction.Rollback();
-            throw;
+            var isExistingEmailException = ex.InnerException is PostgresException postgresEx && postgresEx.SqlState == "23505";
+            if (isExistingEmailException)
+            {
+                System.Console.WriteLine("1111111111111111111111111111111");
+                System.Console.WriteLine("1111111111111111111111111111111");
+                System.Console.WriteLine("1111111111111111111111111111111");
+                System.Console.WriteLine("1111111111111111111111111111111");
+                System.Console.WriteLine("1111111111111111111111111111111");
+                System.Console.WriteLine("1111111111111111111111111111111");
+                return Result<Unit>.Err("A user with this email already exists.");
+            }
+
+            System.Console.WriteLine("222222222222222222222222222222");
+            System.Console.WriteLine("222222222222222222222222222222");
+            System.Console.WriteLine("222222222222222222222222222222");
+            System.Console.WriteLine("222222222222222222222222222222");
+            System.Console.WriteLine("222222222222222222222222222222");
+            System.Console.WriteLine("222222222222222222222222222222");
+            System.Console.WriteLine("222222222222222222222222222222");
+            return Result<Unit>.Err("An error occurred while processing your request.");
         }
     }
 }
-

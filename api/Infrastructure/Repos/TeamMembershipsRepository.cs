@@ -18,13 +18,15 @@ public class TeamMembershipsRepository : ITeamMembershipsRepository
 
     public async Task<IEnumerable<TeamMembership>> GetUserMemberships(int userId)
     {
-        var teams = await _vevousDbContext.TeamMemberships
-            .Where(tm => tm.UserId == userId)
-            .Include(tm => tm.Team)
-            .Include(tm => tm.User)
-            .ToListAsync();
+        // var teams = await _vevousDbContext.TeamMemberships
+        //     .Where(tm => tm.UserId == userId)
+        //     .Include(tm => tm.Team)
+        //     .Include(tm => tm.User)
+        //     .ToListAsync();
 
-        return teams;
+        // return teams;
+
+        throw new NotImplementedException();
 
         // Efficient style
         // var teams = _vevousDbContext.TeamMemberships

@@ -1,8 +1,14 @@
 import {
+    Alert,
     AppBar,
     Button,
     Card,
+    CircularProgress,
     Container,
+    Fade,
+    Slide,
+    SlideProps,
+    Snackbar,
     TextField,
     Toolbar,
     Typography,
@@ -11,25 +17,92 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
 import ApiClient from '../dataAccess/api';
+import { useState } from 'react';
+import { TransitionProps } from '@mui/material/transitions';
 
 function SignUpPage() {
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
         formState: { errors },
         watch,
+        setError,
     } = useForm<ICreateUserForm>();
 
     // Watch the password field to compare with confirm password
     const password = watch('password');
 
+    const [isFormSubmitting, setIsFormSubmitting] = useState(false);
     const onSubmit = (data: ICreateUserForm) => {
-        console.log(data);
+        setIsFormSubmitting(true);
+
         const apiClient = new ApiClient();
-        apiClient.users.create(data);
+        apiClient.users
+            .create(data)
+            .then((res) => {
+                console.log('Then');
+                console.log(res);
+
+                if (res.ok) {
+                    navigate('/signin');
+                } else {
+                    res.json()
+                        .then((json) => {
+                            console.log(json);
+                            // set useform email field to this custom error
+                            setError('email', {
+                                type: 'manual', // Specify that this error is set manually
+                                message: 'This email is already registered.',
+                            });
+                        })
+                        .catch((json) => console.log(json));
+                }
+            })
+            .catch((res) => {
+                console.log('Catch');
+                console.log(res);
+
+                if (
+                    res instanceof TypeError &&
+                    res.message.includes('Failed to fetch')
+                ) {
+                    setSnackbar({
+                        Transition: SlideTransition,
+                        open: true,
+                    });
+                }
+            })
+            .finally(() => {
+                console.log('Finally');
+
+                setIsFormSubmitting(false);
+            });
     };
 
-    const navigate = useNavigate();
+    // Snackbar
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean;
+        Transition: React.ComponentType<
+            TransitionProps & {
+                children: React.ReactElement<any, any>;
+            }
+        >;
+    }>({
+        open: false,
+        Transition: Fade,
+    });
+
+    const handleSnackbarClose = () => {
+        setSnackbar({
+            Transition: SlideTransition,
+            open: false,
+        });
+    };
+
+    function SlideTransition(props: SlideProps) {
+        return <Slide {...props} direction="up" />;
+    }
 
     return (
         <div
@@ -39,6 +112,21 @@ function SignUpPage() {
                 height: '100%',
             }}
         >
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={5000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Something went wrong while processing your request. Please
+                    check your connection and try again.
+                </Alert>
+            </Snackbar>
             <AppBar position="static">
                 <Toolbar>
                     <Typography
@@ -183,7 +271,14 @@ function SignUpPage() {
                                 color="primary"
                                 fullWidth
                             >
-                                Create Account
+                                {isFormSubmitting ? (
+                                    <CircularProgress
+                                        size={24}
+                                        color="inherit"
+                                    />
+                                ) : (
+                                    'Create Account'
+                                )}
                             </Button>
                         </div>
                     </form>

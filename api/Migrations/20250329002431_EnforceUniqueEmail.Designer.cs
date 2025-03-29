@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Infrastructure;
@@ -12,9 +13,11 @@ using api.Infrastructure;
 namespace api.Migrations
 {
     [DbContext(typeof(VevousDbContext))]
-    partial class VevousDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250329002431_EnforceUniqueEmail")]
+    partial class EnforceUniqueEmail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,8 +36,8 @@ namespace api.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(127)
-                        .HasColumnType("character varying(127)");
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");

@@ -94,7 +94,7 @@ const SignInPage = () => {
                         {/* Password */}
                         <TextField
                             label="Password"
-                            type="text"
+                            type="password"
                             sx={{ mt: 2, width: '100%' }}
                             {...register('password', {
                                 required: 'Password is required', // Validation rule

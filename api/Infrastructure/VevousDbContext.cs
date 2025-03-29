@@ -10,7 +10,7 @@ public class VevousDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Standup> Standups { get; set; }
-    public DbSet<TeamMembership> TeamMemberships { get; set; }
+    // public DbSet<TeamMembership> TeamMemberships { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -26,6 +26,8 @@ public class VevousDbContext : DbContext
             entity.Property(e => e.Email)
                 .IsRequired()
                 .HasMaxLength(254);
+            entity.HasIndex(e => e.Email)
+                .IsUnique();
 
             entity.ToTable("Users");
         });
@@ -39,7 +41,7 @@ public class VevousDbContext : DbContext
                 .IsRequired();
             entity.Property(e => e.Password)
                 .IsRequired()
-                .HasMaxLength(32);
+                .HasMaxLength(127);
 
             // Foreign key relation
             entity.HasOne<User>()
@@ -103,29 +105,29 @@ public class VevousDbContext : DbContext
             entity.ToTable("Standup");
         });
 
-        modelBuilder.Entity<TeamMembership>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.Id)
-                .ValueGeneratedOnAdd();
+        // modelBuilder.Entity<TeamMembership>(entity =>
+        // {
+        //     entity.HasKey(e => e.Id);
+        //     entity.Property(e => e.Id)
+        //         .ValueGeneratedOnAdd();
 
-            entity.Property(e => e.TeamId)
-                .IsRequired();
+        //     entity.Property(e => e.TeamId)
+        //         .IsRequired();
 
-            entity.HasOne<Team>()
-                .WithMany()
-                .HasForeignKey(e => e.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
+        //     entity.HasOne<Team>()
+        //         .WithMany()
+        //         .HasForeignKey(e => e.TeamId)
+        //         .OnDelete(DeleteBehavior.Cascade);
 
-            entity.Property(e => e.UserId)
-                .IsRequired();
+        //     entity.Property(e => e.UserId)
+        //         .IsRequired();
 
-            entity.HasOne<User>()
-                .WithMany()
-                .HasForeignKey(e => e.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+        //     entity.HasOne<User>()
+        //         .WithMany()
+        //         .HasForeignKey(e => e.UserId)
+        //         .OnDelete(DeleteBehavior.Cascade);
 
-            entity.ToTable("TeamMembership");
-        });
+        //     entity.ToTable("TeamMembership");
+        // });
     }
 }

@@ -20,34 +20,42 @@ export default class ApiClient {
         this.baseUrl = import.meta.env.VITE_VEVOUS_API_BASE_URL;
     }
 
-    private async request<T>(
+    private async request(
         endpoint: string,
         method: RequestMethod,
         body?: string,
-    ): Promise<Result<T, string>> {
-        try {
-            const url = `${this.baseUrl}${endpoint}`;
-            const query = {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: body ? JSON.stringify(body) : undefined,
-            };
+    ): Promise<Response> {
+        // try {
+        const url = `${this.baseUrl}${endpoint}`;
+        const query = {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: body ? body : undefined,
+        };
 
-            console.log(query);
+        console.log(query);
 
-            const res = await fetch(url, query);
+        const res = await fetch(url, query);
 
-            return ok(await res.json());
-        } catch (e) {
-            return err(`api request error: ${e}`);
-        }
+        console.log(res);
+
+        return res;
+
+        //     return ok(await res.json());
+        // } catch (e) {
+        //     return err(`api request error: ${e}`);
+        // }
     }
 
     users = {
         getTeams: (userId: number) =>
             this.request(`/users/${userId}/teams`, RequestMethod.GET),
         create: (user: ICreateUserForm) =>
-            this.request('/users', RequestMethod.POST, JSON.stringify(user)),
+            this.request(
+                '/Users/Create',
+                RequestMethod.POST,
+                JSON.stringify(user),
+            ),
     };
 
     teams = {
