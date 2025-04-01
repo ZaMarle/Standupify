@@ -30,10 +30,13 @@ public class UsersRepository : IUsersRepository
 
             var authUser = new AuthUser(user.Id, createUserFormDto.Password);
 
-            var passwordHasher = new PasswordHasher<AuthUser>();
-            var hashedPassword = passwordHasher.HashPassword(authUser, createUserFormDto.Password);
+            var passwordHasher = new PasswordHasher<string>();
+            var hashedPassword = passwordHasher.HashPassword("", createUserFormDto.Password);
 
             authUser.Password = hashedPassword;
+            System.Console.WriteLine(createUserFormDto.Password);
+
+            System.Console.WriteLine(hashedPassword);
 
             _vevousDbContext.Add(authUser);
             await _vevousDbContext.SaveChangesAsync();
@@ -47,22 +50,9 @@ public class UsersRepository : IUsersRepository
             var isExistingEmailException = ex.InnerException is PostgresException postgresEx && postgresEx.SqlState == "23505";
             if (isExistingEmailException)
             {
-                System.Console.WriteLine("1111111111111111111111111111111");
-                System.Console.WriteLine("1111111111111111111111111111111");
-                System.Console.WriteLine("1111111111111111111111111111111");
-                System.Console.WriteLine("1111111111111111111111111111111");
-                System.Console.WriteLine("1111111111111111111111111111111");
-                System.Console.WriteLine("1111111111111111111111111111111");
-                return Result<Unit>.Err("A user with this email already exists.");
+                return Result<Unit>.Err("EmailExists");
             }
 
-            System.Console.WriteLine("222222222222222222222222222222");
-            System.Console.WriteLine("222222222222222222222222222222");
-            System.Console.WriteLine("222222222222222222222222222222");
-            System.Console.WriteLine("222222222222222222222222222222");
-            System.Console.WriteLine("222222222222222222222222222222");
-            System.Console.WriteLine("222222222222222222222222222222");
-            System.Console.WriteLine("222222222222222222222222222222");
             return Result<Unit>.Err("An error occurred while processing your request.");
         }
     }

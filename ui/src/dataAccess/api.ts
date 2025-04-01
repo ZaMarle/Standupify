@@ -1,6 +1,6 @@
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
-import { ok, err, Result } from '../utils/Result';
+import ISignInForm from '../interfaces/ISignInForm';
 
 enum RequestMethod {
     GET = 'GET',
@@ -25,7 +25,6 @@ export default class ApiClient {
         method: RequestMethod,
         body?: string,
     ): Promise<Response> {
-        // try {
         const url = `${this.baseUrl}${endpoint}`;
         const query = {
             method,
@@ -40,11 +39,6 @@ export default class ApiClient {
         console.log(res);
 
         return res;
-
-        //     return ok(await res.json());
-        // } catch (e) {
-        //     return err(`api request error: ${e}`);
-        // }
     }
 
     users = {
@@ -61,6 +55,15 @@ export default class ApiClient {
     teams = {
         create: (team: ICreateTeamForm) =>
             this.request('/teams', RequestMethod.POST, team.toString()),
+    };
+
+    auth = {
+        signIn: (signInForm: ISignInForm) =>
+            this.request(
+                '/auth',
+                RequestMethod.POST,
+                JSON.stringify(signInForm),
+            ),
     };
 
     // users = {

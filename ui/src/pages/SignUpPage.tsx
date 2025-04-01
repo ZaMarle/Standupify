@@ -41,28 +41,21 @@ function SignUpPage() {
         apiClient.users
             .create(data)
             .then((res) => {
-                console.log('Then');
-                console.log(res);
-
                 if (res.ok) {
                     navigate('/signin');
                 } else {
-                    res.json()
-                        .then((json) => {
-                            console.log(json);
-                            // set useform email field to this custom error
+                    res.json().then((json) => {
+                        console.log(json);
+                        if (json['message'] == 'EmailExists') {
                             setError('email', {
-                                type: 'manual', // Specify that this error is set manually
+                                type: 'manual',
                                 message: 'This email is already registered.',
                             });
-                        })
-                        .catch((json) => console.log(json));
+                        }
+                    });
                 }
             })
             .catch((res) => {
-                console.log('Catch');
-                console.log(res);
-
                 if (
                     res instanceof TypeError &&
                     res.message.includes('Failed to fetch')
@@ -74,8 +67,6 @@ function SignUpPage() {
                 }
             })
             .finally(() => {
-                console.log('Finally');
-
                 setIsFormSubmitting(false);
             });
     };

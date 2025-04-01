@@ -6,14 +6,21 @@ import {
     AppBar,
     Toolbar,
     Card,
+    CircularProgress,
+    Fade,
+    Slide,
+    SlideProps,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-
-interface ISignInForm {
-    email: string;
-    password: string;
-}
+import ApiClient from '../dataAccess/api';
+import ISignInForm from '../interfaces/ISignInForm';
+import { useState } from 'react';
+import { TransitionProps } from '@mui/material/transitions';
+import { Info } from '@mui/icons-material';
+import { useAuth } from '../AuthContext';
 
 const SignInPage = () => {
     const {
@@ -22,9 +29,73 @@ const SignInPage = () => {
         formState: { errors },
     } = useForm<ISignInForm>();
 
+    const { signIn } = useAuth();
+
+    const [isFormSubmitting, setIsFormSubmitting] = useState(false);
+
+    const [isInvalid, setIsInvalid] = useState(false);
     const onSubmit = (data: ISignInForm) => {
+        setIsFormSubmitting(true);
         console.log(data);
+
+        const apiClient = new ApiClient();
+        apiClient.auth
+            .signIn(data)
+            .then((res) => {
+                console.log('Then');
+                console.log(res);
+
+                if (res.ok) {
+                    res.text().then((text) => {
+                        console.log(text);
+                        signIn(text);
+                        // navigate('/');
+                    });
+                } else {
+                    setIsInvalid(true);
+                }
+            })
+            .catch((res) => {
+                console.log('Catch');
+                if (
+                    res instanceof TypeError &&
+                    res.message.includes('Failed to fetch')
+                ) {
+                    setSnackbar({
+                        Transition: SlideTransition,
+                        open: true,
+                    });
+                }
+            })
+            .finally(() => {
+                console.log('Finally');
+                setIsFormSubmitting(false);
+            });
     };
+
+    // Snackbar
+    const [snackbar, setSnackbar] = useState<{
+        open: boolean;
+        Transition: React.ComponentType<
+            TransitionProps & {
+                children: React.ReactElement<any, any>;
+            }
+        >;
+    }>({
+        open: false,
+        Transition: Fade,
+    });
+
+    const handleSnackbarClose = () => {
+        setSnackbar({
+            Transition: SlideTransition,
+            open: false,
+        });
+    };
+
+    function SlideTransition(props: SlideProps) {
+        return <Slide {...props} direction="up" />;
+    }
 
     const navigate = useNavigate();
 
@@ -36,6 +107,21 @@ const SignInPage = () => {
                 height: '100%',
             }}
         >
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={5000}
+                onClose={handleSnackbarClose}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity="error"
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Something went wrong while processing your request. Please
+                    check your connection and try again.
+                </Alert>
+            </Snackbar>
             <AppBar position="static">
                 <Toolbar>
                     <Typography
@@ -74,8 +160,16 @@ const SignInPage = () => {
                     >
                         Sign in to Vevous
                     </Typography>
-
-                    {/* <CardContent> */}
+                    {isInvalid && (
+                        <Alert
+                            icon={<Info fontSize="inherit" />}
+                            severity="error"
+                            sx={{ mb: 2 }}
+                        >
+                            That doesn't look right. Check your email and
+                            password and try again.
+                        </Alert>
+                    )}
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         style={{ width: '100%' }}
@@ -99,7 +193,6 @@ const SignInPage = () => {
                             {...register('password', {
                                 required: 'Password is required', // Validation rule
                             })}
-                            // sx={{ mt: 2, width: '100%' }}
                             error={!!errors.password} // Show error styling when error exists
                             helperText={errors.password?.message?.toString()} // Display the error message
                         />
@@ -110,7 +203,14 @@ const SignInPage = () => {
                                 color="primary"
                                 fullWidth
                             >
-                                Sign in
+                                {isFormSubmitting ? (
+                                    <CircularProgress
+                                        size={24}
+                                        color="inherit"
+                                    />
+                                ) : (
+                                    'Sign in'
+                                )}
                             </Button>
                         </div>
                         {/* <Grid
@@ -134,7 +234,6 @@ const SignInPage = () => {
                                 </span>
                             </Grid> */}
                     </form>
-                    {/* </CardContent> */}
                 </Card>
             </Container>
         </div>

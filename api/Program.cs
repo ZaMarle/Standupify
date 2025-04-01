@@ -1,3 +1,4 @@
+using api.Helper;
 using api.Infrastructure;
 using api.Infrastructure.Repos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -26,6 +27,7 @@ builder.Services.AddTransient<ITeamMembershipsRepository, TeamMembershipsReposit
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 builder.Services.AddTransient<ITeamsRepository, TeamsRepository>();
 builder.Services.AddTransient<ITeamMembershipsRepository, TeamMembershipsRepository>();
+builder.Services.AddTransient<JwtService, JwtService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>

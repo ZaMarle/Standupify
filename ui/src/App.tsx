@@ -5,7 +5,7 @@ import {
     Route,
     RouterProvider,
 } from 'react-router-dom';
-import { useAuth } from './AuthContext ';
+import { useAuth } from './AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
@@ -15,8 +15,7 @@ import TeamsPage from './pages/TeamsPage';
 import TeamPage from './pages/TeamPage';
 
 function App() {
-    const { isSignedIn } = useAuth();
-    console.log(isSignedIn);
+    const { token } = useAuth();
 
     const router = createBrowserRouter(
         createRoutesFromElements(
@@ -27,7 +26,7 @@ function App() {
                         path="teams"
                         element={
                             <ProtectedRoute
-                                canActivate={isSignedIn}
+                                canActivate={token != null}
                                 redirectPath="/signin"
                             >
                                 <TeamsPage />
@@ -41,7 +40,7 @@ function App() {
                     path="/signin"
                     element={
                         <ProtectedRoute
-                            canActivate={!isSignedIn}
+                            canActivate={token == null}
                             redirectPath="/"
                         >
                             <SignInPage />
@@ -52,7 +51,7 @@ function App() {
                     path="/signup"
                     element={
                         <ProtectedRoute
-                            canActivate={!isSignedIn}
+                            canActivate={token == null}
                             redirectPath="/"
                         >
                             <SignUpPage />
