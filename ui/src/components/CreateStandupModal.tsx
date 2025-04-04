@@ -17,6 +17,7 @@ import ICreateStandupForm from '../interfaces/ICreateStandupForm';
 import { useEffect, useState } from 'react';
 import ApiClient from '../dataAccess/api';
 import Team from '../models/Team';
+import { useAuth } from '../AuthContext';
 
 interface CreateStandupModalProps {
     open: boolean;
@@ -24,6 +25,8 @@ interface CreateStandupModalProps {
 }
 
 function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
+    const { token } = useAuth();
+
     const { control, register, handleSubmit, reset } =
         useForm<ICreateStandupForm>();
 
@@ -48,24 +51,28 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
     useEffect(() => {
         if (open) {
             const apiClient = new ApiClient();
-            apiClient.users.getTeams(1).then((res) => {
-                console.log('unwrapping res');
-                if (res.ok) {
-                    console.log(res);
+            const userId = token?.userId;
 
-                    res.json().then((json) => {
-                        console.log(json);
-                    });
+            if (userId) {
+                apiClient.users.getTeams(token?.userId).then((res) => {
+                    console.log('unwrapping res');
+                    if (res.ok) {
+                        console.log(res);
 
-                    setTeams([
-                        { id: 1, name: 'Software Development' },
-                        { id: 2, name: 'Systems' },
-                        { id: 3, name: 'Engineering' },
-                    ]);
-                }
-            });
+                        res.json().then((json) => {
+                            console.log(json);
+                        });
+
+                        setTeams([
+                            { id: 1, name: 'Software Development' },
+                            { id: 2, name: 'Systems' },
+                            { id: 3, name: 'Engineering' },
+                        ]);
+                    }
+                });
+            }
         }
-    }, [open]);
+    }, [open, token]);
 
     return (
         <Modal

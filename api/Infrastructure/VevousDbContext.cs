@@ -70,8 +70,8 @@ public class VevousDbContext : DbContext
 
             // Foreign key relation
             entity.HasOne<User>()
-                .WithOne()
-                .HasForeignKey<Team>(a => a.CreatedById)
+                .WithMany()
+                .HasForeignKey(a => a.CreatedById)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.ToTable("Team");

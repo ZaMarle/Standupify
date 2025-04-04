@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using api.Infrastructure;
 using api.Infrastructure.Entities;
-using api.Infrastructure.Repos;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,11 +23,8 @@ public class TeamsController : Controller
     public async Task<IActionResult> CreateTeam([FromBody] CreateTeamFormDto createTeamFormDto)
     {
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
         if (string.IsNullOrEmpty(userId))
-        {
             return Unauthorized("User not authenticated.");
-        }
 
         System.Console.WriteLine(userId);
 
@@ -38,6 +34,10 @@ public class TeamsController : Controller
         {
             var team = new Team(createTeamFormDto.TeamName, createTeamFormDto.Description, int.Parse(userId));
             await _vevousDbContext.AddAsync(team);
+            await _vevousDbContext.SaveChangesAsync();
+
+            var teamMembership = new TeamMembership(team.Id, int.Parse(userId));
+            await _vevousDbContext.AddAsync(teamMembership);
             await _vevousDbContext.SaveChangesAsync();
 
             await transaction.CommitAsync();

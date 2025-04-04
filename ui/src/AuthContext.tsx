@@ -6,9 +6,46 @@ import {
     useEffect,
 } from 'react';
 
+class Token {
+    raw: string;
+    userId: number;
+    userEmail: string;
+    userRoles: Array<string>;
+    aud: string;
+    exp: number;
+    iss: string;
+
+    constructor(rawToken: string) {
+        this.raw = rawToken;
+
+        try {
+            const decodedToken = JSON.parse(atob(rawToken.split('.')[1]));
+            console.log('Decoded Token:', decodedToken);
+            this.userId =
+                decodedToken[
+                    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
+                ];
+            this.userEmail =
+                decodedToken[
+                    'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'
+                ];
+            this.userRoles = decodedToken[''];
+            this.aud = decodedToken['aud'];
+            this.exp = decodedToken['exp'];
+            this.iss = decodedToken['iss'];
+
+            console.log(this);
+        } catch (error) {
+            console.error('Failed to decode token:', error);
+
+            throw new Error('');
+        }
+    }
+}
+
 // Define the shape of the context value
 interface AuthContextType {
-    token: string | null;
+    token: Token | undefined;
     signIn: (jwt: string) => void;
     signOut: () => void;
 }
@@ -31,36 +68,28 @@ interface AuthProviderProps {
 
 // AuthProvider component that will wrap the entire app
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    const [token, setToken] = useState(localStorage.getItem('jwt') || null);
+    const [token, setToken] = useState<Token>();
 
     // Load the token from localStorage when the component mounts
     useEffect(() => {
-        const storedToken = localStorage.getItem('jwt');
-        if (storedToken) {
-            console.log(storedToken);
-
-            try {
-                const decodedToken = JSON.parse(
-                    atob(storedToken.split('.')[1]),
-                );
-                console.log('Decoded Token:', decodedToken);
-            } catch (error) {
-                console.error('Failed to decode token:', error);
-            }
-
-            setToken(storedToken);
+        const jwt = localStorage.getItem('jwt');
+        if (jwt) {
+            const t = new Token(jwt);
+            setToken(t);
         }
     }, []);
 
     const signIn = (jwt: string) => {
         console.log('Signing in user');
+        const t = new Token(jwt);
+        setToken(t);
 
-        setToken(jwt);
+        setToken(t);
         localStorage.setItem('jwt', jwt); // Store token in localStorage
     };
 
     const signOut = () => {
-        setToken(null);
+        setToken(undefined);
         localStorage.removeItem('jwt'); // Remove token from storage
     };
 
@@ -68,5 +97,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         <AuthContext.Provider value={{ token, signIn, signOut }}>
             {children}
         </AuthContext.Provider>
+        // <>
+        //     {token ? (
+        //     ) : null}
+        // </>
     );
 };

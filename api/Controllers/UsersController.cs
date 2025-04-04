@@ -1,8 +1,10 @@
 using System.Text.Json;
+using api.Infrastructure;
 using api.Infrastructure.Repos;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace api.Controllers;
@@ -11,26 +13,35 @@ public class UsersController : Controller
 {
     private readonly ILogger<UsersController> _logger;
     private readonly IUsersRepository _usersRepository;
-    private readonly ITeamMembershipsRepository _teamMembershipsRepository;
+    private readonly VevousDbContext _vevousDbContext;
 
     public UsersController(
         ILogger<UsersController> logger,
         IUsersRepository usersRepository,
-        ITeamMembershipsRepository teamMembershipsRepository)
+        VevousDbContext vevousDbContext)
     {
         _logger = logger;
         _usersRepository = usersRepository;
-        _teamMembershipsRepository = teamMembershipsRepository;
+        _vevousDbContext = vevousDbContext;
     }
 
     [Authorize]
     [HttpGet("{id}/Teams")]
     public async Task<IActionResult> GetTeamMemberships(int id)
     {
-        var teams = await _teamMembershipsRepository.GetUserMemberships(id);
+        var teams = await _vevousDbContext.TeamMemberships
+            .Where(tm => tm.UserId == id)
+            .Include(tm => tm.Team)
+            .Include(tm => tm.User)
+            .ToListAsync();
+
+        System.Console.WriteLine(teams.Count);
+        System.Console.WriteLine(teams);
+
         return Ok(teams);
     }
 
+    [Authorize]
     [HttpPost("Create")]
     public async Task<IActionResult> CreateUser([FromBody] CreateUserFormDto createAccountForm)
     {
