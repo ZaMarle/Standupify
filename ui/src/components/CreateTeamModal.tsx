@@ -15,7 +15,7 @@ import {
 import { useForm } from 'react-hook-form';
 import ApiClient from '../dataAccess/api';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TransitionProps } from '@mui/material/transitions';
 
 interface CreateTeamModalProps {
@@ -28,6 +28,7 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
         register,
         handleSubmit,
         formState: { errors },
+        reset,
     } = useForm<ICreateTeamForm>();
 
     const onSubmit = (data: ICreateTeamForm) => {
@@ -36,7 +37,7 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
         apiClient.teams.create(data).then((res) => {
             console.log(res);
 
-            if (res.kind == 'err') {
+            if (!res.ok) {
                 setSnackbar({
                     open: true,
                     Transition: SlideTransition,
@@ -46,6 +47,16 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
             }
         });
     };
+
+    // Reset form when modal opens/closes
+    useEffect(() => {
+        if (open) {
+            reset({
+                description: '',
+                teamName: '',
+            });
+        }
+    }, [open, reset]);
 
     // Snackbar
     const [snackbar, setSnackbar] = React.useState<{

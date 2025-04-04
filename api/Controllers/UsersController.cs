@@ -1,6 +1,7 @@
 using System.Text.Json;
 using api.Infrastructure.Repos;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 
@@ -22,6 +23,7 @@ public class UsersController : Controller
         _teamMembershipsRepository = teamMembershipsRepository;
     }
 
+    [Authorize]
     [HttpGet("{id}/Teams")]
     public async Task<IActionResult> GetTeamMemberships(int id)
     {

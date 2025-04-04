@@ -59,7 +59,7 @@ function TeamPage() {
                             <TableCell>Description</TableCell>
                             <TableCell>
                                 <IconButton
-                                    size="large"
+                                    size="small"
                                     aria-label="account of current user"
                                     aria-controls="menu-appbar"
                                     aria-haspopup="true"
@@ -89,7 +89,7 @@ function TeamPage() {
                                 <TableCell>{row.bio}</TableCell>
                                 <TableCell sx={{ width: 0 }}>
                                     <IconButton
-                                        size="large"
+                                        size="small"
                                         aria-label="account of current user"
                                         aria-controls="menu-appbar"
                                         aria-haspopup="true"

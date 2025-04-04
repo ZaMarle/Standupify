@@ -1,6 +1,5 @@
 using api.Helper;
 using api.Infrastructure;
-using api.Infrastructure.Entities;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -47,7 +46,8 @@ public class AuthController : Controller
             return BadRequest();
         }
 
-        var token = _jwtService.GenerateToken(user.Email);
+        // var token = _jwtService.GenerateToken(user.Email);
+        var token = _jwtService.GenerateToken(user.Email, user.Id);
 
         return Ok(token);
     }

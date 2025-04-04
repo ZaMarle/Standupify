@@ -1,8 +1,10 @@
+using System.Text;
 using api.Helper;
 using api.Infrastructure;
 using api.Infrastructure.Repos;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,9 +13,25 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = "https://localhost:7250/"; // URL for your identity provider
-        options.Audience = "http://localhost:5173/signup"; // Audience, usually your API identifier
-        // options.RequireHttpsMetadata = false; // For development, set this to true in production
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = "https://localhost:7250",
+
+            ValidateAudience = true,
+            ValidAudience = "http://localhost:5173",
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero // Ensure token expiration is precise
+        };
+        // // options.Authority = "https://localhost:7250"; // URL for your identity provider
+        // options.Audience = "http://localhost:5173"; // Audience, usually your API identifier
+        // // options.Va
+        // // ValidateIssuer = true,
+        // // options.RequireHttpsMetadata = false; // For development, set this to true in production
     });
 
 // Connect to Db
@@ -27,7 +45,7 @@ builder.Services.AddTransient<ITeamMembershipsRepository, TeamMembershipsReposit
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 builder.Services.AddTransient<ITeamsRepository, TeamsRepository>();
 builder.Services.AddTransient<ITeamMembershipsRepository, TeamMembershipsRepository>();
-builder.Services.AddTransient<JwtService, JwtService>();
+builder.Services.AddTransient<JwtService, JwtService>(sp => new JwtService(builder.Configuration["Jwt:Key"]));
 
 // Add CORS policy
 builder.Services.AddCors(options =>

@@ -31,13 +31,23 @@ interface AuthProviderProps {
 
 // AuthProvider component that will wrap the entire app
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-    // const [isSignedIn, setIsSignedIn] = useState(signedIn);
     const [token, setToken] = useState(localStorage.getItem('jwt') || null);
 
     // Load the token from localStorage when the component mounts
     useEffect(() => {
         const storedToken = localStorage.getItem('jwt');
         if (storedToken) {
+            console.log(storedToken);
+
+            try {
+                const decodedToken = JSON.parse(
+                    atob(storedToken.split('.')[1]),
+                );
+                console.log('Decoded Token:', decodedToken);
+            } catch (error) {
+                console.error('Failed to decode token:', error);
+            }
+
             setToken(storedToken);
         }
     }, []);

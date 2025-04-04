@@ -26,9 +26,13 @@ export default class ApiClient {
         body?: string,
     ): Promise<Response> {
         const url = `${this.baseUrl}${endpoint}`;
+        const token = localStorage.getItem('jwt');
         const query = {
             method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
             body: body ? body : undefined,
         };
 
@@ -54,7 +58,7 @@ export default class ApiClient {
 
     teams = {
         create: (team: ICreateTeamForm) =>
-            this.request('/teams', RequestMethod.POST, team.toString()),
+            this.request('/teams', RequestMethod.POST, JSON.stringify(team)),
     };
 
     auth = {

@@ -42,21 +42,16 @@ const SignInPage = () => {
         apiClient.auth
             .signIn(data)
             .then((res) => {
-                console.log('Then');
-                console.log(res);
-
                 if (res.ok) {
                     res.text().then((text) => {
-                        console.log(text);
                         signIn(text);
-                        // navigate('/');
+                        navigate('/');
                     });
                 } else {
                     setIsInvalid(true);
                 }
             })
             .catch((res) => {
-                console.log('Catch');
                 if (
                     res instanceof TypeError &&
                     res.message.includes('Failed to fetch')
@@ -68,7 +63,6 @@ const SignInPage = () => {
                 }
             })
             .finally(() => {
-                console.log('Finally');
                 setIsFormSubmitting(false);
             });
     };

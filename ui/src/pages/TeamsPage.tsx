@@ -5,8 +5,9 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Typography } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from '../components/PageHeader';
 
 function createData(id: number, name: string, description: string) {
     return { id, name, description };
@@ -28,7 +29,7 @@ function TeamsPage() {
 
     return (
         <>
-            <Typography variant="h4">Teams</Typography>
+            <PageHeader text="Teams" />
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>

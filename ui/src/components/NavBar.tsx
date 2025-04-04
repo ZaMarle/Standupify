@@ -3,6 +3,7 @@ import { Menu as MenuIcon } from '@mui/icons-material';
 import {
     AppBar,
     Box,
+    Button,
     Drawer,
     IconButton,
     List,
@@ -15,13 +16,16 @@ import {
     Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CreateStandupModal from './CreateStandupModal';
 import CreateTeamModal from './CreateTeamModal';
+import { useAuth } from '../AuthContext';
 
 function NavBar() {
     const navigate = useNavigate();
+
+    const { signOut, token } = useAuth();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -129,59 +133,72 @@ function NavBar() {
                         Vevous
                     </Typography>
                     <div style={{ marginLeft: 'auto' }}>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenCreateTeamModal}
-                            color="inherit"
-                            sx={{ '&:focus': { outline: 'none' } }}
-                        >
-                            <Add />
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenPostModal}
-                            color="inherit"
-                            sx={{ '&:focus': { outline: 'none' } }}
-                        >
-                            <Draw />
-                        </IconButton>
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="inherit"
-                            sx={{ '&:focus': { outline: 'none' } }}
-                        >
-                            <AccountCircle />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
-                        >
-                            <MenuItem onClick={handleClose}>Profile</MenuItem>
-                            <MenuItem onClick={handleClose}>
-                                My account
-                            </MenuItem>
-                        </Menu>
+                        {!token ? (
+                            <Button
+                                style={{ marginLeft: 'auto' }}
+                                onClick={() => navigate('/signin')}
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                            >
+                                Sign in
+                            </Button>
+                        ) : (
+                            <>
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleOpenCreateTeamModal}
+                                    color="inherit"
+                                    sx={{ '&:focus': { outline: 'none' } }}
+                                >
+                                    <Add />
+                                </IconButton>
+                                <IconButton
+                                    size="large"
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleOpenPostModal}
+                                    color="inherit"
+                                    sx={{ '&:focus': { outline: 'none' } }}
+                                >
+                                    <Draw />
+                                </IconButton>
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleMenu}
+                                    color="inherit"
+                                    sx={{ '&:focus': { outline: 'none' } }}
+                                >
+                                    <AccountCircle />
+                                </IconButton>
+
+                                <Menu
+                                    id="menu-appbar"
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleClose}
+                                >
+                                    <MenuItem onClick={handleClose}>
+                                        Profile
+                                    </MenuItem>
+                                    <MenuItem
+                                        onClick={() => {
+                                            console.log('sign out');
+                                            signOut();
+                                            navigate('/');
+                                        }}
+                                    >
+                                        Sign out
+                                    </MenuItem>
+                                </Menu>
+                            </>
+                        )}
                     </div>
                 </Toolbar>
             </AppBar>

@@ -50,8 +50,12 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
             const apiClient = new ApiClient();
             apiClient.users.getTeams(1).then((res) => {
                 console.log('unwrapping res');
-                if (res.kind == 'ok') {
-                    console.log(res.value);
+                if (res.ok) {
+                    console.log(res);
+
+                    res.json().then((json) => {
+                        console.log(json);
+                    });
 
                     setTeams([
                         { id: 1, name: 'Software Development' },

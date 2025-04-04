@@ -28,16 +28,10 @@ public class UsersRepository : IUsersRepository
             _vevousDbContext.Add(user);
             await _vevousDbContext.SaveChangesAsync();
 
-            var authUser = new AuthUser(user.Id, createUserFormDto.Password);
-
             var passwordHasher = new PasswordHasher<string>();
             var hashedPassword = passwordHasher.HashPassword("", createUserFormDto.Password);
 
-            authUser.Password = hashedPassword;
-            System.Console.WriteLine(createUserFormDto.Password);
-
-            System.Console.WriteLine(hashedPassword);
-
+            var authUser = new AuthUser(user.Id, hashedPassword);
             _vevousDbContext.Add(authUser);
             await _vevousDbContext.SaveChangesAsync();
 
