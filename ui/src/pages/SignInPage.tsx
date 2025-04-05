@@ -23,6 +23,7 @@ import { Info } from '@mui/icons-material';
 import { useAuth } from '../AuthContext';
 
 const SignInPage = () => {
+    const authContext = useAuth();
     const {
         register,
         handleSubmit,
@@ -38,7 +39,7 @@ const SignInPage = () => {
         setIsFormSubmitting(true);
         console.log(data);
 
-        const apiClient = new ApiClient();
+        const apiClient = new ApiClient(authContext);
         apiClient.auth
             .signIn(data)
             .then((res) => {

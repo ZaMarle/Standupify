@@ -44,14 +44,14 @@ class Token {
 }
 
 // Define the shape of the context value
-interface AuthContextType {
+export interface IAuthContext {
     token: Token | undefined;
     signIn: (jwt: string) => void;
     signOut: () => void;
 }
 
 // Create a context for authentication
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 // // Custom hook to use the AuthContext
 export const useAuth = () => {
@@ -81,10 +81,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const signIn = (jwt: string) => {
         console.log('Signing in user');
+
         const t = new Token(jwt);
+        console.log(t);
         setToken(t);
 
-        setToken(t);
         localStorage.setItem('jwt', jwt); // Store token in localStorage
     };
 
@@ -97,9 +98,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         <AuthContext.Provider value={{ token, signIn, signOut }}>
             {children}
         </AuthContext.Provider>
+        // This would make it so token could be not nullable
         // <>
         //     {token ? (
-        //     ) : null}
+        //         <AuthContext.Provider value={{ token, signIn, signOut }}>
+        //             {children}
+        //         </AuthContext.Provider>
+        //     ) : (
+        //         <>signIn or signup workflows only</>
+        //     )}
         // </>
     );
 };

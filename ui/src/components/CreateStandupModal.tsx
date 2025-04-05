@@ -25,7 +25,7 @@ interface CreateStandupModalProps {
 }
 
 function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
-    const { token } = useAuth();
+    const authContext = useAuth();
 
     const { control, register, handleSubmit, reset } =
         useForm<ICreateStandupForm>();
@@ -50,11 +50,12 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
     const [teams, setTeams] = useState<Array<Team>>([]);
     useEffect(() => {
         if (open) {
-            const apiClient = new ApiClient();
-            const userId = token?.userId;
+            console.log(authContext);
+            const apiClient = new ApiClient(authContext);
+            const userId = authContext.token?.userId;
 
             if (userId) {
-                apiClient.users.getTeams(token?.userId).then((res) => {
+                apiClient.users.getTeams(userId).then((res) => {
                     console.log('unwrapping res');
                     if (res.ok) {
                         console.log(res);
@@ -72,7 +73,7 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
                 });
             }
         }
-    }, [open, token]);
+    }, [open, authContext]);
 
     return (
         <Modal

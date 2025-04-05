@@ -1,23 +1,27 @@
+import { IAuthContext, useAuth } from '../AuthContext';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
 import ISignInForm from '../interfaces/ISignInForm';
+import IQuery from './IQuery';
+import { RequestMethod } from './RequestMethod';
 
-enum RequestMethod {
-    GET = 'GET',
-    POST = 'POST',
-    PUT = 'PUT',
-    DELETE = 'DELETE',
-}
+let isRefreshing = false;
+let refreshQueue: {
+    resolve: (token: string) => void;
+    reject: (error: any) => void;
+}[] = [];
 
 export default class ApiClient {
-    private baseUrl: string;
+    private _baseUrl: string;
+    private _authContext: IAuthContext;
 
-    constructor() {
+    constructor(authContext: IAuthContext) {
         if (!import.meta.env.VITE_VEVOUS_API_BASE_URL) {
             throw new Error('Env variable not defined: VEVOUS_API_BASE_URL');
         }
 
-        this.baseUrl = import.meta.env.VITE_VEVOUS_API_BASE_URL;
+        this._baseUrl = import.meta.env.VITE_VEVOUS_API_BASE_URL;
+        this._authContext = authContext;
     }
 
     private async request(
@@ -25,13 +29,14 @@ export default class ApiClient {
         method: RequestMethod,
         body?: string,
     ): Promise<Response> {
-        const url = `${this.baseUrl}${endpoint}`;
-        const token = localStorage.getItem('jwt');
-        const query = {
+        const url = `${this._baseUrl}${endpoint}`;
+        const query: IQuery = {
             method,
             headers: {
                 'Content-Type': 'application/json',
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                ...(this._authContext.token
+                    ? { Authorization: `Bearer ${this._authContext.token.raw}` }
+                    : {}),
             },
             body: body ? body : undefined,
         };
@@ -39,10 +44,57 @@ export default class ApiClient {
         console.log(query);
 
         const res = await fetch(url, query);
+        if (res.status === 401) {
+            return this.handleUnauthorized(url, query);
+        }
 
         console.log(res);
 
         return res;
+    }
+
+    private async handleUnauthorized(url: string, query: IQuery) {
+        if (isRefreshing) {
+            return new Promise((resolve, reject) => {
+                refreshQueue.push({ resolve, reject });
+            }).then((newToken) => {
+                query.headers.Authorization = `Bearer ${newToken}`;
+                return fetch(url, query);
+            });
+        }
+
+        isRefreshing = true;
+
+        try {
+            const refreshUrl = `${this._baseUrl}/auth/refresh`;
+            const refreshResponse = await fetch(refreshUrl, {
+                method: 'POST',
+                credentials: 'include',
+            });
+
+            if (!refreshResponse.ok) {
+                throw new Error('Refresh token failed');
+            }
+
+            const data = await refreshResponse.json();
+            this._authContext.signIn(data.accessToken);
+
+            refreshQueue.forEach((promise) =>
+                promise.resolve(data.accessToken),
+            );
+            refreshQueue = [];
+
+            query.headers.Authorization = `Bearer ${data.accessToken}`;
+            return fetch(`${this._baseUrl}${url}`, query);
+        } catch (error) {
+            refreshQueue.forEach((promise) => promise.reject(error));
+            refreshQueue = [];
+
+            this._authContext.signOut();
+            throw error;
+        } finally {
+            isRefreshing = false;
+        }
     }
 
     users = {

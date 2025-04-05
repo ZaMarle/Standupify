@@ -11,6 +11,8 @@ public class AuthController : Controller
 {
     private readonly VevousDbContext _vevousDbContext;
     private readonly JwtService _jwtService;
+    private static Dictionary<string, string> _refreshTokens = new(); // In-memory storage (use DB in production)
+
     public AuthController(VevousDbContext vevousDbContext, JwtService jwtService)
     {
         _vevousDbContext = vevousDbContext;
@@ -18,7 +20,7 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateUser([FromBody] SignInUserFormDto signInUserFormDto)
+    public async Task<IActionResult> SignIn([FromBody] SignInUserFormDto signInUserFormDto)
     {
         var user = await _vevousDbContext.Users
             .Where(u => u.Email.Equals(signInUserFormDto.Email))
@@ -46,8 +48,12 @@ public class AuthController : Controller
             return BadRequest();
         }
 
-        // var token = _jwtService.GenerateToken(user.Email);
         var token = _jwtService.GenerateToken(user.Email, user.Id);
+
+        // Refresh token
+        var refreshToken = _jwtService.GenerateRefreshToken();
+        _refreshTokens[refreshToken] = signInUserFormDto.Email;
+        Response.Cookies.Append("refreshToken", refreshToken, new CookieOptions { HttpOnly = true, Secure = true });
 
         return Ok(token);
     }
