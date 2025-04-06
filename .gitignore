@@ -28,6 +28,7 @@ out/
 .env
 appsettings.*.json
 appsettings.Local.json
+config/*
 
 # Visual Studio files
 .vscode/*
@@ -55,3 +56,5 @@ charts/
 *.swp
 Thumbs.db
 .DS_Store
+
+#

@@ -32,11 +32,7 @@ public class UsersController : Controller
         var teams = await _vevousDbContext.TeamMemberships
             .Where(tm => tm.UserId == id)
             .Include(tm => tm.Team)
-            .Include(tm => tm.User)
             .ToListAsync();
-
-        System.Console.WriteLine(teams.Count);
-        System.Console.WriteLine(teams);
 
         return Ok(teams);
     }

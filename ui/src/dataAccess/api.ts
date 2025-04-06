@@ -1,4 +1,4 @@
-import { IAuthContext, useAuth } from '../AuthContext';
+import { IAuthContext } from '../AuthContext';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
 import ISignInForm from '../interfaces/ISignInForm';
@@ -38,6 +38,7 @@ export default class ApiClient {
                     ? { Authorization: `Bearer ${this._authContext.token.raw}` }
                     : {}),
             },
+            credentials: 'include',
             body: body ? body : undefined,
         };
 
@@ -85,7 +86,8 @@ export default class ApiClient {
             refreshQueue = [];
 
             query.headers.Authorization = `Bearer ${data.accessToken}`;
-            return fetch(`${this._baseUrl}${url}`, query);
+
+            return fetch(`${url}`, query);
         } catch (error) {
             refreshQueue.forEach((promise) => promise.reject(error));
             refreshQueue = [];

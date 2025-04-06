@@ -35,7 +35,7 @@ public class JwtService
             issuer: "https://localhost:7250",
             audience: "http://localhost:5173",
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(30), // Short-lived token
+            expires: DateTime.UtcNow.AddMinutes(1), // Short-lived token
             signingCredentials: credentials
         );
 

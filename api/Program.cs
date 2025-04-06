@@ -27,11 +27,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero // Ensure token expiration is precise
         };
-        // // options.Authority = "https://localhost:7250"; // URL for your identity provider
-        // options.Audience = "http://localhost:5173"; // Audience, usually your API identifier
-        // // options.Va
-        // // ValidateIssuer = true,
-        // // options.RequireHttpsMetadata = false; // For development, set this to true in production
     });
 
 // Connect to Db
@@ -52,7 +47,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin", policy =>
     {
-        policy.WithOrigins("http://localhost:5173") // Whitelist frontend origin
+        policy.WithOrigins("https://localhost:5173") // Whitelist frontend origin
             .AllowAnyMethod() // Allow all HTTP methods (GET, POST, etc.)
             .AllowAnyHeader() // Allow all headers
             .AllowCredentials(); // Allow cookies/auth headers if needed

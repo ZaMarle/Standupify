@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import ApiClient from '../dataAccess/api';
 import Team from '../models/Team';
 import { useAuth } from '../AuthContext';
+import UserTeams from '../models/UserTeams';
 
 interface CreateStandupModalProps {
     open: boolean;
@@ -62,13 +63,14 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
 
                         res.json().then((json) => {
                             console.log(json);
-                        });
 
-                        setTeams([
-                            { id: 1, name: 'Software Development' },
-                            { id: 2, name: 'Systems' },
-                            { id: 3, name: 'Engineering' },
-                        ]);
+                            const teams = json.map((t: UserTeams) => ({
+                                id: t.teamId,
+                                name: t.team.name,
+                            }));
+
+                            setTeams(teams);
+                        });
                     }
                 });
             }

@@ -63,11 +63,11 @@ public class VevousDbContext : DbContext
             entity.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(255);
-            entity.Property(e => e.CreatedById)
-                .IsRequired();
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+            entity.Property(e => e.CreatedById)
+                .IsRequired();
             // Foreign key relation
             entity.HasOne<User>()
                 .WithMany()
@@ -114,18 +114,26 @@ public class VevousDbContext : DbContext
             entity.Property(e => e.TeamId)
                 .IsRequired();
 
-            entity.HasOne<Team>()
+            entity.HasOne(e => e.Team)
                 .WithMany()
                 .HasForeignKey(e => e.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade); ;
 
             entity.Property(e => e.UserId)
                 .IsRequired();
 
-            entity.HasOne<User>()
+            entity.HasOne(e => e.User)
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // entity.Property(e => e.CreatedById)
+            //     .IsRequired();
+            // // Foreign key relation
+            // entity.HasOne<User>()
+            //     .WithMany()
+            //     .HasForeignKey(a => a.CreatedById)
+            //     .OnDelete(DeleteBehavior.Cascade);
 
             entity.ToTable("TeamMembership");
         });

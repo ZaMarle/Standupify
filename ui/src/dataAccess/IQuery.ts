@@ -6,5 +6,6 @@ export default interface IQuery {
         Authorization?: string | undefined;
         'Content-Type': string;
     };
+    credentials: RequestCredentials;
     body: string | undefined;
 }
