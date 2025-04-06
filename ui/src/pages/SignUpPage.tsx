@@ -16,7 +16,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
-import ApiClient from '../dataAccess/api';
+import ApiClient from '../dataAccess/ApiClient';
 import { useState } from 'react';
 import { TransitionProps } from '@mui/material/transitions';
 

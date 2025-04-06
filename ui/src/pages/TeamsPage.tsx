@@ -5,27 +5,43 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
-
-function createData(id: number, name: string, description: string) {
-    return { id, name, description };
-}
-
-const rows = [
-    createData(1, 'Systems', 'Elite hackers of IT infrastructure.'),
-    createData(
-        2,
-        'Software Development',
-        'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptate ex harum numquam, ipsum vel animi mollitia aliquid nesciunt saepe iste dicta? Repudiandae molestiae molestias non quia dolore? Vel corrupti doloremque nemo ad nam excepturi, magnam sequi ab. Neque, provident cumque.',
-    ),
-    createData(3, 'Front End Development', 'Typescript go brr.'),
-    createData(4, 'Engineering', 'We enjoy water.'),
-];
+import Team from '../models/Team';
+import { useEffect, useState } from 'react';
+import { useAuth } from '../AuthContext';
+import ApiClient from '../dataAccess/ApiClient';
 
 function TeamsPage() {
     const navigate = useNavigate();
+    const authContext = useAuth();
+
+    const [teams, setTeams] = useState<Array<Team>>([]);
+    useEffect(() => {
+        const fetchTeams = async () => {
+            const apiClient = new ApiClient(authContext);
+            const userId = authContext.token?.userId;
+            if (!userId) return;
+
+            const getTeamsRes = await apiClient.users.getTeams(userId);
+            if (!getTeamsRes.ok)
+                throw new Error('Failed to perform: apiClient.users.getTeams');
+
+            const teamsJson = await getTeamsRes.json();
+
+            const teams: Array<Team> = teamsJson.map((t: any) => ({
+                id: t.team.id,
+                name: t.team.name,
+                description: t.team.description,
+                createdById: t.team.createdById,
+                createdDate: t.team.createdDate,
+            }));
+
+            setTeams(teams);
+        };
+
+        fetchTeams();
+    }, [authContext]);
 
     return (
         <>
@@ -39,22 +55,22 @@ function TeamsPage() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
+                        {teams.map((team) => (
                             <TableRow
                                 hover
-                                key={row.name}
+                                key={team.name}
                                 sx={{
                                     cursor: 'pointer',
                                     '&:last-child td, &:last-child th': {
                                         border: 0,
                                     },
                                 }}
-                                onClick={() => navigate(`${row.id}`)}
+                                onClick={() => navigate(`${team.id}`)}
                             >
                                 <TableCell component="th" scope="row">
-                                    {row.name}
+                                    {team.name}
                                 </TableCell>
-                                <TableCell>{row.description}</TableCell>
+                                <TableCell>{team.description}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

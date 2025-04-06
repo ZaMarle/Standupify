@@ -13,10 +13,11 @@ import {
     Typography,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import ApiClient from '../dataAccess/api';
+import ApiClient from '../dataAccess/ApiClient';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import React, { useEffect } from 'react';
 import { TransitionProps } from '@mui/material/transitions';
+import { useAuth } from '../AuthContext';
 
 interface CreateTeamModalProps {
     open: boolean;
@@ -24,6 +25,7 @@ interface CreateTeamModalProps {
 }
 
 function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
+    const authContext = useAuth();
     const {
         register,
         handleSubmit,
@@ -33,7 +35,7 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
 
     const onSubmit = (data: ICreateTeamForm) => {
         console.log(data);
-        const apiClient = new ApiClient();
+        const apiClient = new ApiClient(authContext);
         apiClient.teams.create(data).then((res) => {
             console.log(res);
 

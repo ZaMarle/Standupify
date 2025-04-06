@@ -15,10 +15,9 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import ICreateStandupForm from '../interfaces/ICreateStandupForm';
 import { useEffect, useState } from 'react';
-import ApiClient from '../dataAccess/api';
+import ApiClient from '../dataAccess/ApiClient';
 import Team from '../models/Team';
 import { useAuth } from '../AuthContext';
-import UserTeams from '../models/UserTeams';
 
 interface CreateStandupModalProps {
     open: boolean;
@@ -50,31 +49,31 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
     // Fetch team for dropdown
     const [teams, setTeams] = useState<Array<Team>>([]);
     useEffect(() => {
-        if (open) {
-            console.log(authContext);
+        if (!open) return;
+
+        const fetchTeams = async () => {
             const apiClient = new ApiClient(authContext);
             const userId = authContext.token?.userId;
+            if (!userId) return;
 
-            if (userId) {
-                apiClient.users.getTeams(userId).then((res) => {
-                    console.log('unwrapping res');
-                    if (res.ok) {
-                        console.log(res);
+            const getTeamsRes = await apiClient.users.getTeams(userId);
+            if (!getTeamsRes.ok)
+                throw new Error('Failed to perform: apiClient.users.getTeams');
 
-                        res.json().then((json) => {
-                            console.log(json);
+            const teamsJson = await getTeamsRes.json();
 
-                            const teams = json.map((t: UserTeams) => ({
-                                id: t.teamId,
-                                name: t.team.name,
-                            }));
+            const teams: Array<Team> = teamsJson.map((t: any) => ({
+                id: t.team.id,
+                name: t.team.name,
+                description: t.team.description,
+                createdById: t.team.createdById,
+                createdDate: t.team.createdDate,
+            }));
 
-                            setTeams(teams);
-                        });
-                    }
-                });
-            }
-        }
+            setTeams(teams);
+        };
+
+        fetchTeams();
     }, [open, authContext]);
 
     return (
