@@ -1,4 +1,15 @@
-import { Box, Button, Card, Modal, TextField, Typography } from '@mui/material';
+import {
+    Button,
+    Card,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Modal,
+    Select,
+    TextField,
+    Typography,
+} from '@mui/material';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 interface IInviteToTeamModalProps {
@@ -9,6 +20,7 @@ interface IInviteToTeamModalProps {
 
 interface ICreateTeamForm {
     email: string;
+    role: string;
 }
 
 function InviteToTeamModal({
@@ -20,7 +32,18 @@ function InviteToTeamModal({
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<ICreateTeamForm>();
+        reset,
+    } = useForm<ICreateTeamForm>({ defaultValues: { role: 'user' } });
+
+    // Reset form when modal opens/closes
+    useEffect(() => {
+        if (open) {
+            reset({
+                email: '',
+                role: 'user',
+            });
+        }
+    }, [open, reset]);
 
     const onSubmit = (data: ICreateTeamForm) => {
         console.log(data);
@@ -57,11 +80,33 @@ function InviteToTeamModal({
                         type="text"
                         sx={{ width: '100%' }}
                         {...register('email', {
-                            required: 'Email is required', // Validation rule
+                            required: 'Email is required',
                         })}
-                        error={!!errors.email} // Show error styling when error exists
-                        helperText={errors.email?.message?.toString()} // Display the error message
+                        error={!!errors.email}
+                        helperText={errors.email?.message?.toString()}
                     />
+                    <FormControl
+                        sx={{ width: '100%', mt: 2 }}
+                        error={!!errors.role}
+                    >
+                        <InputLabel>Role</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            label="Age"
+                            {...register('role', {
+                                required: 'Role is required',
+                            })}
+                            defaultValue="user"
+                        >
+                            <MenuItem key="user" value="user">
+                                User
+                            </MenuItem>
+                            <MenuItem key="admin" value="admin">
+                                Admin
+                            </MenuItem>
+                        </Select>
+                    </FormControl>
                     <div style={{ marginTop: 16, float: 'right' }}>
                         <Button
                             sx={{ mr: 1 }}

@@ -1,118 +1,109 @@
-import { Add, Delete } from '@mui/icons-material';
 import {
     Button,
-    IconButton,
+    Card,
+    CardContent,
     Paper,
     Table,
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
     TableRow,
     Typography,
 } from '@mui/material';
-import React from 'react';
-import InviteToTeamModal from '../components/InviteToTeamModal';
+import TeamMembersTable from '../components/TeamMembersTable';
+import { useParams } from 'react-router-dom';
 
-function createData(
+function createDangerItem(
     id: number,
-    firstName: string,
-    lastName: string,
-    bio: string,
+    title: string,
+    body: string,
+    btn: string,
 ) {
-    return { id, firstName, lastName, bio };
+    return { id, title, body, btn };
 }
 
-const rows = [
-    createData(1, 'Zachary', 'Marley', 'Elite Developer'),
-    createData(2, 'Oliver', 'Brass', 'Principal Developer'),
+const dangerItems = [
+    createDangerItem(
+        1,
+        'Leave this team',
+        'You will lose access to team resources and permissions. This action cannot be undone. Make sure you no longer need access before proceeding.',
+        'Leave',
+    ),
+    createDangerItem(
+        2,
+        'Delete this team',
+        'Once you delete a team, there is no going back. Please be certain.',
+        'Delete',
+    ),
+    createDangerItem(
+        3,
+        'Transfer ownership',
+        'Transfer this repository to another user or to an organization where you have the ability to create repositories.',
+        'Transfer',
+    ),
 ];
 
 function TeamPage() {
-    const handleDelete = () => {};
-
-    // PostModal
-    const [openInviteToTeamModal, setOpenInviteToTeamModal] =
-        React.useState(false);
-    const handleOpenInviteToTeamModal = () => setOpenInviteToTeamModal(true);
-    const handleCloseInviteToTeamModal = () => setOpenInviteToTeamModal(false);
+    const { teamId } = useParams<{ teamId: string }>();
 
     return (
         <>
-            <InviteToTeamModal
-                open={openInviteToTeamModal}
-                handleClose={handleCloseInviteToTeamModal}
-                teamName="TODO: implement"
-            />
-            <Typography variant="h4">Systems</Typography>
-            <Typography variant="body1">
-                Elite hackers of IT infrastructure.
+            <Typography variant="h4" sx={{ mb: 1 }}>
+                General
             </Typography>
-            <Typography sx={{ mt: 2 }} variant="h6">
+            <Card>
+                <CardContent>
+                    <Typography variant="body1">Systems</Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Quam velit repellendus illo, cupiditate tenetur, libero
+                        dolor consequuntur magnam atque deserunt voluptatem,
+                        alias ut. Facere tempora molestiae sunt eius. Doloribus,
+                        molestias. Pariatur facilis totam nesciunt architecto
+                        tempora mollitia dolore autem rem?
+                    </Typography>
+                </CardContent>
+            </Card>
+            <Typography sx={{ mt: 4, mb: 1 }} variant="h4">
                 Members
+            </Typography>
+            {teamId ? <TeamMembersTable teamId={Number(teamId)} /> : <></>}
+            <Typography variant="h4" sx={{ mt: 4, mb: 1 }}>
+                Danger Zone
             </Typography>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Name</TableCell>
-                            <TableCell>Description</TableCell>
-                            <TableCell>
-                                <IconButton
-                                    size="small"
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleOpenInviteToTeamModal}
-                                    color="default"
-                                    sx={{ '&:focus': { outline: 'none' } }}
-                                >
-                                    <Add />
-                                </IconButton>
-                            </TableCell>
-                        </TableRow>
-                    </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
+                        {dangerItems.map((dangerItem) => (
                             <TableRow
                                 hover
-                                key={row.id}
+                                key={dangerItem.id}
                                 sx={{
                                     '&:last-child td, &:last-child th': {
                                         border: 0,
                                     },
                                 }}
                             >
-                                <TableCell component="th" scope="row">
-                                    {`${row.firstName} ${row.lastName}`}
+                                <TableCell>
+                                    <h3>{dangerItem.title}</h3>
+                                    <p>{dangerItem.body}</p>
                                 </TableCell>
-                                <TableCell>{row.bio}</TableCell>
-                                <TableCell sx={{ width: 0 }}>
-                                    <IconButton
-                                        size="small"
-                                        aria-label="account of current user"
-                                        aria-controls="menu-appbar"
-                                        aria-haspopup="true"
-                                        onClick={handleDelete}
+                                <TableCell
+                                    sx={{ width: 0, textAlign: 'right' }}
+                                >
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
                                         color="error"
-                                        sx={{ '&:focus': { outline: 'none' } }}
                                     >
-                                        <Delete />
-                                    </IconButton>
+                                        {dangerItem.btn}
+                                    </Button>
                                 </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
                 </Table>
             </TableContainer>
-            <Button
-                sx={{ mt: 2 }}
-                type="submit"
-                variant="contained"
-                color="error"
-            >
-                Leave
-            </Button>
         </>
     );
 }

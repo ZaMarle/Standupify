@@ -16,7 +16,7 @@ import {
     Typography,
 } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CreateStandupModal from './CreateStandupModal';
 import CreateTeamModal from './CreateTeamModal';
@@ -101,7 +101,8 @@ function NavBar() {
                 open={openCreateTeamModal}
                 handleClose={handleCloseCreateTeamModal}
             />
-            <AppBar position="static">
+            <Box sx={{ width: '100%', height: '64px' }} />
+            <AppBar position="fixed">
                 <Drawer open={open} onClose={toggleDrawer(false)}>
                     {DrawerList}
                 </Drawer>

@@ -111,6 +111,9 @@ public class VevousDbContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedOnAdd();
 
+            entity.Property(e => e.Role)
+                .IsRequired();
+
             entity.Property(e => e.TeamId)
                 .IsRequired();
 
@@ -126,14 +129,6 @@ public class VevousDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            // entity.Property(e => e.CreatedById)
-            //     .IsRequired();
-            // // Foreign key relation
-            // entity.HasOne<User>()
-            //     .WithMany()
-            //     .HasForeignKey(a => a.CreatedById)
-            //     .OnDelete(DeleteBehavior.Cascade);
 
             entity.ToTable("TeamMembership");
         });

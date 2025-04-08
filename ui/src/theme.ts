@@ -54,6 +54,9 @@ const theme = createTheme({
                 root: {
                     padding: '8px 16px',
                     fontWeight: 600,
+                    '&:focus': {
+                        outline: 'none',
+                    },
                 },
             },
         },

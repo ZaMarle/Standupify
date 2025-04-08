@@ -104,15 +104,28 @@ export default class ApiClient {
             this.request(`/users/${userId}/teams`, RequestMethod.GET),
         create: (user: ICreateUserForm) =>
             this.request(
-                '/Users/Create',
+                '/users/create',
                 RequestMethod.POST,
                 JSON.stringify(user),
             ),
     };
 
     teams = {
+        get: (teamId: number) =>
+            this.request(`/teams/${teamId}`, RequestMethod.GET),
+        getMembers: (teamId: number) =>
+            this.request(`/teams/${teamId}/members`, RequestMethod.GET),
         create: (team: ICreateTeamForm) =>
             this.request('/teams', RequestMethod.POST, JSON.stringify(team)),
+        delete: (teamId: number) =>
+            this.request(`/teams/${teamId}/delete`, RequestMethod.DELETE),
+        removeUser: (userId: number) =>
+            this.request(`/teams/${userId}/removeUser`, RequestMethod.GET),
+        transferOwnership: (userId: number) =>
+            this.request(
+                `/teams/${userId}/transferOwnership`,
+                RequestMethod.PUT,
+            ),
     };
 
     auth = {

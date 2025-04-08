@@ -4,6 +4,7 @@ using api.Infrastructure.Entities;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers;
 [Route("[controller]")]
@@ -18,6 +19,39 @@ public class TeamsController : Controller
         _vevousDbContext = vevousDbContext;
     }
 
+
+    [Authorize]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(int id)
+    {
+        var team = await _vevousDbContext.Teams.FindAsync(id);
+
+        if (team == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(team);
+    }
+
+    [Authorize]
+    [HttpGet("{id}/Members")]
+    public async Task<IActionResult> GetTeamMemberships(int id)
+    {
+        bool teamExists = await _vevousDbContext.Teams.AnyAsync(t => t.Id == id);
+        if (!teamExists)
+        {
+            return NotFound();
+        }
+
+        var members = await _vevousDbContext.TeamMemberships
+            .Where(tm => tm.TeamId == id)
+            .Include(tm => tm.User)
+            .ToListAsync();
+
+        return Ok(members);
+    }
+
     [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateTeam([FromBody] CreateTeamFormDto createTeamFormDto)
@@ -25,8 +59,6 @@ public class TeamsController : Controller
         var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(userId))
             return Unauthorized("User not authenticated.");
-
-        System.Console.WriteLine(userId);
 
         using var transaction = await _vevousDbContext.Database.BeginTransactionAsync();
 
@@ -36,7 +68,7 @@ public class TeamsController : Controller
             await _vevousDbContext.AddAsync(team);
             await _vevousDbContext.SaveChangesAsync();
 
-            var teamMembership = new TeamMembership(team.Id, int.Parse(userId));
+            var teamMembership = new TeamMembership(team.Id, int.Parse(userId), "Owner");
             await _vevousDbContext.AddAsync(teamMembership);
             await _vevousDbContext.SaveChangesAsync();
 

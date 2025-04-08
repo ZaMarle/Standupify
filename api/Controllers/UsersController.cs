@@ -29,6 +29,12 @@ public class UsersController : Controller
     [HttpGet("{id}/Teams")]
     public async Task<IActionResult> GetTeamMemberships(int id)
     {
+        bool userExists = await _vevousDbContext.Users.AnyAsync(t => t.Id == id);
+        if (!userExists)
+        {
+            return NotFound();
+        }
+
         var teams = await _vevousDbContext.TeamMemberships
             .Where(tm => tm.UserId == id)
             .Include(tm => tm.Team)
