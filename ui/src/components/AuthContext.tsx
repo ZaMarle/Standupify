@@ -48,6 +48,7 @@ export interface IAuthContext {
     token: Token | undefined;
     signIn: (jwt: string) => void;
     signOut: () => void;
+    isLoading: boolean;
 }
 
 // Create a context for authentication
@@ -69,6 +70,7 @@ interface AuthProviderProps {
 // AuthProvider component that will wrap the entire app
 export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [token, setToken] = useState<Token>();
+    const [isLoading, setIsLoading] = useState(true);
 
     // Load the token from localStorage when the component mounts
     useEffect(() => {
@@ -76,6 +78,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (jwt) {
             const t = new Token(jwt);
             setToken(t);
+            setIsLoading(false);
         }
     }, []);
 
@@ -95,7 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     };
 
     return (
-        <AuthContext.Provider value={{ token, signIn, signOut }}>
+        <AuthContext.Provider value={{ token, signIn, signOut, isLoading }}>
             {children}
         </AuthContext.Provider>
         // This would make it so token could be not nullable
