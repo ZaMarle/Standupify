@@ -35,7 +35,7 @@ public class UsersController : Controller
             return NotFound();
         }
 
-        var teams = await _vevousDbContext.TeamMemberships
+        var teams = await _vevousDbContext.TeamsMemberships
             .Where(tm => tm.UserId == id)
             .Include(tm => tm.Team)
             .ToListAsync();

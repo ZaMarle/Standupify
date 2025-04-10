@@ -1,23 +1,10 @@
-import {
-    Alert,
-    Box,
-    Button,
-    Card,
-    Container,
-    Fade,
-    Modal,
-    Slide,
-    SlideProps,
-    Snackbar,
-    TextField,
-    Typography,
-} from '@mui/material';
+import { Button, Card, Modal, TextField, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import ApiClient from '../dataAccess/ApiClient';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
-import React, { useEffect } from 'react';
-import { TransitionProps } from '@mui/material/transitions';
-import { useAuth } from '../AuthContext';
+import { useEffect } from 'react';
+import { useAuth } from './AuthContext';
+import { SnackMessages, useSnack } from './SnackContext';
 
 interface CreateTeamModalProps {
     open: boolean;
@@ -26,6 +13,7 @@ interface CreateTeamModalProps {
 
 function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
     const authContext = useAuth();
+    const snackContext = useSnack();
     const {
         register,
         handleSubmit,
@@ -33,21 +21,14 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
         reset,
     } = useForm<ICreateTeamForm>();
 
-    const onSubmit = (data: ICreateTeamForm) => {
-        console.log(data);
+    const onSubmit = async (data: ICreateTeamForm) => {
         const apiClient = new ApiClient(authContext);
-        apiClient.teams.create(data).then((res) => {
-            console.log(res);
-
-            if (!res.ok) {
-                setSnackbar({
-                    open: true,
-                    Transition: SlideTransition,
-                });
-            } else {
-                handleClose();
-            }
-        });
+        const res = await apiClient.teams.create(data);
+        if (!res.ok) {
+            snackContext.send(SnackMessages.BadConnection);
+        } else {
+            handleClose();
+        }
     };
 
     // Reset form when modal opens/closes
@@ -60,111 +41,70 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
         }
     }, [open, reset]);
 
-    // Snackbar
-    const [snackbar, setSnackbar] = React.useState<{
-        open: boolean;
-        Transition: React.ComponentType<
-            TransitionProps & {
-                children: React.ReactElement<any, any>;
-            }
-        >;
-    }>({
-        open: false,
-        Transition: Fade,
-    });
-
-    const handleSnackbarClose = () => {
-        setSnackbar({
-            Transition: SlideTransition,
-            open: false,
-        });
-    };
-
-    function SlideTransition(props: SlideProps) {
-        return <Slide {...props} direction="up" />;
-    }
-
     return (
-        <>
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={5000}
-                onClose={handleSnackbarClose}
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Card
+                sx={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 400,
+                    bgcolor: 'background.paper',
+                    p: 2,
+                    borderRadius: '8px',
+                }}
             >
-                <Alert
-                    onClose={handleClose}
-                    severity="error"
-                    variant="filled"
-                    sx={{ width: '100%' }}
+                <Typography sx={{ mb: 2 }} variant="h6">
+                    Create new team
+                </Typography>
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    style={{ width: '100%' }}
                 >
-                    Something went wrong while processing your request. Please
-                    check your connection and try again.
-                </Alert>
-            </Snackbar>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-            >
-                <Card
-                    sx={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        width: 400,
-                        bgcolor: 'background.paper',
-                        p: 2,
-                        borderRadius: '8px',
-                    }}
-                >
-                    <Typography sx={{ mb: 2 }} variant="h6">
-                        Create new team
-                    </Typography>
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        style={{ width: '100%' }}
-                    >
-                        <TextField
-                            label="Name"
-                            type="text"
-                            sx={{ width: '100%' }}
-                            {...register('teamName', {
-                                required: 'Name is required', // Validation rule
-                            })}
-                            error={!!errors.teamName} // Show error styling when error exists
-                            helperText={errors.teamName?.message?.toString()} // Display the error message
-                        />
-                        <TextField
-                            label="Description"
-                            id="outlined-multiline-static"
-                            multiline
-                            rows={4}
-                            sx={{ mt: 2, width: '100%' }}
-                            {...register('description')}
-                        />
-                        <div style={{ marginTop: 16, float: 'right' }}>
-                            <Button
-                                sx={{ mr: 1 }}
-                                variant="contained"
-                                color="secondary"
-                                onClick={() => handleClose()}
-                            >
-                                Cancel
-                            </Button>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                            >
-                                Create
-                            </Button>
-                        </div>
-                    </form>
-                </Card>
-            </Modal>
-        </>
+                    <TextField
+                        label="Name"
+                        type="text"
+                        sx={{ width: '100%' }}
+                        {...register('teamName', {
+                            required: 'Name is required', // Validation rule
+                        })}
+                        error={!!errors.teamName} // Show error styling when error exists
+                        helperText={errors.teamName?.message?.toString()} // Display the error message
+                    />
+                    <TextField
+                        label="Description"
+                        id="outlined-multiline-static"
+                        multiline
+                        rows={4}
+                        sx={{ mt: 2, width: '100%' }}
+                        {...register('description')}
+                    />
+                    <div style={{ marginTop: 16, float: 'right' }}>
+                        <Button
+                            sx={{ mr: 1 }}
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => handleClose()}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary"
+                        >
+                            Create
+                        </Button>
+                    </div>
+                </form>
+            </Card>
+        </Modal>
     );
 }
 

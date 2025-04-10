@@ -1,13 +1,16 @@
 namespace api.Infrastructure.Entities;
 public class Team
 {
-    public int Id { get; set; } // Auto added by sql
-    public string Name { get; set; } // enforce this is set
-    public string Description { get; set; } // enforce this is set
-    public int CreatedById { get; set; } // enforce this is set
-    public DateTime CreatedDate { get; set; } // Auto added by sql
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public int CreatedById { get; set; }
+    public DateTime CreatedDate { get; set; }
 
-    public Team(string name, string description, int createdById)
+    public Team(
+        string name,
+        string description,
+        int createdById)
     {
         Name = name;
         Description = description;

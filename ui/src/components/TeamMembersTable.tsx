@@ -13,7 +13,7 @@ import {
     TableRow,
 } from '@mui/material';
 import ApiClient from '../dataAccess/ApiClient';
-import { useAuth } from '../AuthContext';
+import { useAuth } from './AuthContext';
 import TeamMember from '../models/TeamMember';
 
 // function createData(

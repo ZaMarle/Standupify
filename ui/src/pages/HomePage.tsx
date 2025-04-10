@@ -1,4 +1,4 @@
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../components/AuthContext';
 import HomeContentPage from './HomeContentPage';
 import HomeLandingPage from './HomeLandingPage';
 

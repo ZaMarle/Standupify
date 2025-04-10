@@ -20,7 +20,7 @@ import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CreateStandupModal from './CreateStandupModal';
 import CreateTeamModal from './CreateTeamModal';
-import { useAuth } from '../AuthContext';
+import { useAuth } from './AuthContext';
 
 function NavBar() {
     const navigate = useNavigate();

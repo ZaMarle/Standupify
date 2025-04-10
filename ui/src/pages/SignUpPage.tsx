@@ -1,14 +1,9 @@
 import {
-    Alert,
     AppBar,
     Button,
     Card,
     CircularProgress,
     Container,
-    Fade,
-    Slide,
-    SlideProps,
-    Snackbar,
     TextField,
     Toolbar,
     Typography,
@@ -18,10 +13,13 @@ import { useNavigate } from 'react-router-dom';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
 import ApiClient from '../dataAccess/ApiClient';
 import { useState } from 'react';
-import { TransitionProps } from '@mui/material/transitions';
+import { SnackMessages, useSnack } from '../components/SnackContext';
+import { useAuth } from '../components/AuthContext';
 
 function SignUpPage() {
     const navigate = useNavigate();
+    const authContext = useAuth();
+    const snackContext = useSnack();
     const {
         register,
         handleSubmit,
@@ -37,7 +35,7 @@ function SignUpPage() {
     const onSubmit = (data: ICreateUserForm) => {
         setIsFormSubmitting(true);
 
-        const apiClient = new ApiClient();
+        const apiClient = new ApiClient(authContext);
         apiClient.users
             .create(data)
             .then((res) => {
@@ -60,40 +58,13 @@ function SignUpPage() {
                     res instanceof TypeError &&
                     res.message.includes('Failed to fetch')
                 ) {
-                    setSnackbar({
-                        Transition: SlideTransition,
-                        open: true,
-                    });
+                    snackContext.send(SnackMessages.BadConnection);
                 }
             })
             .finally(() => {
                 setIsFormSubmitting(false);
             });
     };
-
-    // Snackbar
-    const [snackbar, setSnackbar] = useState<{
-        open: boolean;
-        Transition: React.ComponentType<
-            TransitionProps & {
-                children: React.ReactElement<any, any>;
-            }
-        >;
-    }>({
-        open: false,
-        Transition: Fade,
-    });
-
-    const handleSnackbarClose = () => {
-        setSnackbar({
-            Transition: SlideTransition,
-            open: false,
-        });
-    };
-
-    function SlideTransition(props: SlideProps) {
-        return <Slide {...props} direction="up" />;
-    }
 
     return (
         <div
@@ -103,21 +74,6 @@ function SignUpPage() {
                 height: '100%',
             }}
         >
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={5000}
-                onClose={handleSnackbarClose}
-            >
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity="error"
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    Something went wrong while processing your request. Please
-                    check your connection and try again.
-                </Alert>
-            </Snackbar>
             <AppBar position="static">
                 <Toolbar>
                     <Typography

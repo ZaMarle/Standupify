@@ -1,4 +1,5 @@
-import { IAuthContext } from '../AuthContext';
+import { IAuthContext } from '../components/AuthContext';
+import ICreateStandupForm from '../interfaces/ICreateStandupForm';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
 import ISignInForm from '../interfaces/ISignInForm';
@@ -99,14 +100,26 @@ export default class ApiClient {
         }
     }
 
-    users = {
-        getTeams: (userId: number) =>
-            this.request(`/users/${userId}/teams`, RequestMethod.GET),
-        create: (user: ICreateUserForm) =>
+    auth = {
+        signIn: (signInForm: ISignInForm) =>
             this.request(
-                '/users/create',
+                '/auth',
                 RequestMethod.POST,
-                JSON.stringify(user),
+                JSON.stringify(signInForm),
+            ),
+    };
+
+    standups = {
+        get: (standupId: number) =>
+            this.request(`/standups/${standupId}`, RequestMethod.GET),
+        list: () => {
+            throw new Error('Not implemented');
+        },
+        create: (standup: ICreateStandupForm) =>
+            this.request(
+                '/standups',
+                RequestMethod.POST,
+                JSON.stringify(standup),
             ),
     };
 
@@ -128,12 +141,14 @@ export default class ApiClient {
             ),
     };
 
-    auth = {
-        signIn: (signInForm: ISignInForm) =>
+    users = {
+        getTeams: (userId: number) =>
+            this.request(`/users/${userId}/teams`, RequestMethod.GET),
+        create: (user: ICreateUserForm) =>
             this.request(
-                '/auth',
+                '/users/create',
                 RequestMethod.POST,
-                JSON.stringify(signInForm),
+                JSON.stringify(user),
             ),
     };
 

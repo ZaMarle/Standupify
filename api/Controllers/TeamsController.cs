@@ -44,7 +44,7 @@ public class TeamsController : Controller
             return NotFound();
         }
 
-        var members = await _vevousDbContext.TeamMemberships
+        var members = await _vevousDbContext.TeamsMemberships
             .Where(tm => tm.TeamId == id)
             .Include(tm => tm.User)
             .ToListAsync();
@@ -76,10 +76,9 @@ public class TeamsController : Controller
 
             return Ok();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // throw;
-            return BadRequest();
+            return StatusCode(500, $"An error occurred: {ex.Message}");
         }
     }
 }

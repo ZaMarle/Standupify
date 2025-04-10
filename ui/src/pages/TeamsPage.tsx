@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import PageHeader from '../components/PageHeader';
 import Team from '../models/Team';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../components/AuthContext';
 import ApiClient from '../dataAccess/ApiClient';
 
 function TeamsPage() {

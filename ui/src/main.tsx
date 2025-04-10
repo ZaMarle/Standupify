@@ -5,15 +5,18 @@ import App from './App.tsx';
 import { ThemeProvider } from '@mui/material/styles';
 import theme from './theme'; // Import the theme
 import { CssBaseline } from '@mui/material';
-import { AuthProvider } from './AuthContext.tsx';
+import { AuthProvider } from './components/AuthContext.tsx';
+import { SnackProvider } from './components/SnackContext.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AuthProvider>
-                <App />
-            </AuthProvider>
+            <SnackProvider>
+                <AuthProvider>
+                    <App />
+                </AuthProvider>
+            </SnackProvider>
         </ThemeProvider>
     </StrictMode>,
 );

@@ -5,7 +5,7 @@ import {
     Route,
     RouterProvider,
 } from 'react-router-dom';
-import { useAuth } from './AuthContext';
+import { useAuth } from './components/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';

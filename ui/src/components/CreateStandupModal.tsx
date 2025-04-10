@@ -17,7 +17,8 @@ import ICreateStandupForm from '../interfaces/ICreateStandupForm';
 import { useEffect, useState } from 'react';
 import ApiClient from '../dataAccess/ApiClient';
 import Team from '../models/Team';
-import { useAuth } from '../AuthContext';
+import { useAuth } from './AuthContext';
+import { SnackMessages, useSnack } from './SnackContext';
 
 interface CreateStandupModalProps {
     open: boolean;
@@ -26,12 +27,19 @@ interface CreateStandupModalProps {
 
 function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
     const authContext = useAuth();
+    const snackContext = useSnack();
 
     const { control, register, handleSubmit, reset } =
         useForm<ICreateStandupForm>();
 
-    const onSubmit = (data: ICreateStandupForm) => {
-        console.log(data);
+    const onSubmit = async (data: ICreateStandupForm) => {
+        const apiClient = new ApiClient(authContext);
+        const res = await apiClient.standups.create(data);
+        if (!res.ok) {
+            snackContext.send(SnackMessages.BadConnection);
+        } else {
+            handleClose();
+        }
     };
 
     // Reset form when modal opens/closes

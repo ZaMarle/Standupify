@@ -53,7 +53,7 @@ export interface IAuthContext {
 // Create a context for authentication
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
-// // Custom hook to use the AuthContext
+// Custom hook to use the AuthContext
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {

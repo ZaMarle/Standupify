@@ -7,10 +7,6 @@ import {
     Toolbar,
     Card,
     CircularProgress,
-    Fade,
-    Slide,
-    SlideProps,
-    Snackbar,
     Alert,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -18,12 +14,13 @@ import { useForm } from 'react-hook-form';
 import ApiClient from '../dataAccess/ApiClient';
 import ISignInForm from '../interfaces/ISignInForm';
 import { useState } from 'react';
-import { TransitionProps } from '@mui/material/transitions';
 import { Info } from '@mui/icons-material';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../components/AuthContext';
+import { SnackMessages, useSnack } from '../components/SnackContext';
 
 const SignInPage = () => {
     const authContext = useAuth();
+    const snackContext = useSnack();
     const {
         register,
         handleSubmit,
@@ -57,40 +54,13 @@ const SignInPage = () => {
                     res instanceof TypeError &&
                     res.message.includes('Failed to fetch')
                 ) {
-                    setSnackbar({
-                        Transition: SlideTransition,
-                        open: true,
-                    });
+                    snackContext.send(SnackMessages.BadConnection);
                 }
             })
             .finally(() => {
                 setIsFormSubmitting(false);
             });
     };
-
-    // Snackbar
-    const [snackbar, setSnackbar] = useState<{
-        open: boolean;
-        Transition: React.ComponentType<
-            TransitionProps & {
-                children: React.ReactElement<any, any>;
-            }
-        >;
-    }>({
-        open: false,
-        Transition: Fade,
-    });
-
-    const handleSnackbarClose = () => {
-        setSnackbar({
-            Transition: SlideTransition,
-            open: false,
-        });
-    };
-
-    function SlideTransition(props: SlideProps) {
-        return <Slide {...props} direction="up" />;
-    }
 
     const navigate = useNavigate();
 
@@ -102,21 +72,6 @@ const SignInPage = () => {
                 height: '100%',
             }}
         >
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={5000}
-                onClose={handleSnackbarClose}
-            >
-                <Alert
-                    onClose={handleSnackbarClose}
-                    severity="error"
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    Something went wrong while processing your request. Please
-                    check your connection and try again.
-                </Alert>
-            </Snackbar>
             <AppBar position="static">
                 <Toolbar>
                     <Typography

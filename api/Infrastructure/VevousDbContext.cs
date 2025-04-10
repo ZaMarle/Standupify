@@ -10,7 +10,8 @@ public class VevousDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Standup> Standups { get; set; }
-    public DbSet<TeamMembership> TeamMemberships { get; set; }
+    public DbSet<TeamMembership> TeamsMemberships { get; set; }
+    public DbSet<StandupTeam> StandupsTeams { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -91,15 +92,14 @@ public class VevousDbContext : DbContext
             entity.Property(e => e.Blockers)
                 .IsRequired()
                 .HasMaxLength(255);
-            entity.Property(e => e.CreatedById)
-                .IsRequired();
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            // Foreign key relation
+            entity.Property(e => e.CreatedById)
+                .IsRequired();
             entity.HasOne<User>()
-                .WithOne()
-                .HasForeignKey<Standup>(a => a.CreatedById)
+                .WithMany()
+                .HasForeignKey(a => a.CreatedById)
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.ToTable("Standup");
@@ -131,6 +131,31 @@ public class VevousDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
 
             entity.ToTable("TeamMembership");
+        });
+
+        modelBuilder.Entity<StandupTeam>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .ValueGeneratedOnAdd();
+
+            entity.Property(e => e.TeamId)
+                .IsRequired();
+
+            entity.HasOne(e => e.Team)
+                .WithMany()
+                .HasForeignKey(e => e.TeamId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.Property(e => e.StandupId)
+                .IsRequired();
+
+            entity.HasOne(e => e.Standup)
+                .WithMany()
+                .HasForeignKey(e => e.StandupId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.ToTable("StandupTeam");
         });
     }
 }
