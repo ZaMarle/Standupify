@@ -11,40 +11,57 @@ import {
     Typography,
 } from '@mui/material';
 import TeamMembersTable from '../components/TeamMembersTable';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../components/AuthContext';
+import ApiClient from '../dataAccess/ApiClient';
 
 function createDangerItem(
     id: number,
     title: string,
     body: string,
-    btn: string,
+    btn: { title: string; action: () => void },
 ) {
     return { id, title, body, btn };
 }
 
-const dangerItems = [
-    createDangerItem(
-        1,
-        'Leave this team',
-        'You will lose access to team resources and permissions. This action cannot be undone. Make sure you no longer need access before proceeding.',
-        'Leave',
-    ),
-    createDangerItem(
-        2,
-        'Delete this team',
-        'Once you delete a team, there is no going back. Please be certain.',
-        'Delete',
-    ),
-    createDangerItem(
-        3,
-        'Transfer ownership',
-        'Transfer this repository to another user or to an organization where you have the ability to create repositories.',
-        'Transfer',
-    ),
-];
-
 function TeamPage() {
     const { teamId } = useParams<{ teamId: string }>();
+    const authContext = useAuth();
+    const navigate = useNavigate();
+
+    const dangerItems = [
+        createDangerItem(
+            1,
+            'Leave this team',
+            'You will lose access to team resources and permissions. This action cannot be undone. Make sure you no longer need access before proceeding.',
+            { title: 'Leave', action: () => console.log('Leave') },
+        ),
+        createDangerItem(
+            2,
+            'Delete this team',
+            'Once you delete a team, there is no going back. Please be certain.',
+            {
+                title: 'Delete',
+                action: async () => {
+                    throw new Error(
+                        'Implement confirm alert, type nape of team and confirm like deleting a github repo',
+                    );
+                    const apiClient = new ApiClient(authContext);
+                    if (!teamId) return;
+                    const res = await apiClient.teams.delete(Number(teamId));
+                    if (res.ok) {
+                        navigate(`/profile`);
+                    }
+                },
+            },
+        ),
+        createDangerItem(
+            3,
+            'Transfer ownership',
+            'Transfer this repository to another user or to an organization where you have the ability to create repositories.',
+            { title: 'Transfer', action: () => console.log('Transfer') },
+        ),
+    ];
 
     return (
         <>
@@ -95,8 +112,9 @@ function TeamPage() {
                                         type="submit"
                                         variant="contained"
                                         color="error"
+                                        onClick={() => dangerItem.btn.action()}
                                     >
-                                        {dangerItem.btn}
+                                        {dangerItem.btn.title}
                                     </Button>
                                 </TableCell>
                             </TableRow>

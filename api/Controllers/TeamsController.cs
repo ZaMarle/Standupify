@@ -74,11 +74,28 @@ public class TeamsController : Controller
 
             await transaction.CommitAsync();
 
-            return Ok();
+            return Ok(team);
         }
         catch (Exception ex)
         {
             return StatusCode(500, $"An error occurred: {ex.Message}");
         }
+    }
+
+    [Authorize]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTeam(int id)
+    {
+        var team = await _vevousDbContext.Teams.FindAsync(id);
+        if (team == null)
+            return NotFound($"Unable to find team with id: {id}");
+
+        _vevousDbContext.Teams.Remove(team);
+        var rowsaffected = await _vevousDbContext.SaveChangesAsync();
+
+        if (rowsaffected == 0)
+            return StatusCode(500, "Failed to delete, please try again");
+
+        return Ok();
     }
 }

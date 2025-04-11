@@ -11,8 +11,8 @@ import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
 import NavBar from './components/NavBar';
 import HomePage from './pages/HomePage';
-import TeamsPage from './pages/TeamsPage';
 import TeamPage from './pages/TeamPage';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
     const { token } = useAuth();
@@ -23,17 +23,17 @@ function App() {
                 <Route path="/" element={<NavBar />}>
                     <Route index element={<HomePage />} />
                     <Route
-                        path="teams"
+                        path="profile"
                         element={
                             <ProtectedRoute
                                 canActivate={token != null}
                                 redirectPath="/signin"
                             >
-                                <TeamsPage />
+                                <ProfilePage />
                             </ProtectedRoute>
                         }
                     />
-                    <Route path="teams/:teamId" element={<TeamPage />} />
+                    <Route path="team/:teamId" element={<TeamPage />} />
                     {/* <Route path="test" element={<TestPage />} /> */}
                 </Route>
                 <Route

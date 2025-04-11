@@ -16,21 +16,6 @@ import ApiClient from '../dataAccess/ApiClient';
 import { useAuth } from './AuthContext';
 import TeamMember from '../models/TeamMember';
 
-// function createData(
-//     id: number,
-//     firstName: string,
-//     lastName: string,
-//     role: string,
-// ) {
-//     return { id, firstName, lastName, role };
-// }
-
-// const rows = [
-//     createData(1, 'Zachary', 'Marley', 'Owner'),
-//     createData(2, 'Oliver', 'Brass', 'Admin'),
-//     createData(3, 'Jason', 'Millman', 'User'),
-// ];
-
 interface ITeamMembersTableProps {
     teamId: number;
 }

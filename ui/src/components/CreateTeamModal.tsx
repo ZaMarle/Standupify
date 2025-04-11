@@ -5,13 +5,19 @@ import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import { useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { SnackMessages, useSnack } from './SnackContext';
+import Team from '../models/Team';
 
 interface CreateTeamModalProps {
     open: boolean;
     handleClose: () => void;
+    handleCreate: (team: Team) => void;
 }
 
-function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
+function CreateTeamModal({
+    open,
+    handleClose,
+    handleCreate,
+}: CreateTeamModalProps) {
     const authContext = useAuth();
     const snackContext = useSnack();
     const {
@@ -27,7 +33,12 @@ function CreateTeamModal({ open, handleClose }: CreateTeamModalProps) {
         if (!res.ok) {
             snackContext.send(SnackMessages.BadConnection);
         } else {
-            handleClose();
+            console.log(res);
+            const resJson = await res.json();
+            console.log(resJson);
+            const createdTeam: Team = resJson;
+            console.log(createdTeam);
+            handleCreate(createdTeam);
         }
     };
 

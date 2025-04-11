@@ -1,15 +1,9 @@
-import { AccountCircle, Add, Draw } from '@mui/icons-material';
-import { Menu as MenuIcon } from '@mui/icons-material';
+import { AccountCircle, Draw } from '@mui/icons-material';
 import {
     AppBar,
     Box,
     Button,
-    Drawer,
     IconButton,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
     Menu,
     MenuItem,
     Toolbar,
@@ -19,7 +13,6 @@ import Grid from '@mui/material/Grid2';
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CreateStandupModal from './CreateStandupModal';
-import CreateTeamModal from './CreateTeamModal';
 import { useAuth } from './AuthContext';
 
 function NavBar() {
@@ -41,55 +34,55 @@ function NavBar() {
     const handleOpenPostModal = () => setOpenPostModal(true);
     const handleClosePostModal = () => setOpenPostModal(false);
 
-    // CreateTeamModal
-    const [openCreateTeamModal, setOpenCreateTeamModal] = React.useState(false);
-    const handleOpenCreateTeamModal = () => setOpenCreateTeamModal(true);
-    const handleCloseCreateTeamModal = () => setOpenCreateTeamModal(false);
+    // // CreateTeamModal
+    // const [openCreateTeamModal, setOpenCreateTeamModal] = React.useState(false);
+    // const handleOpenCreateTeamModal = () => setOpenCreateTeamModal(true);
+    // const handleCloseCreateTeamModal = () => setOpenCreateTeamModal(false);
 
-    // Drawer
-    const [open, setOpen] = React.useState(false);
-    const toggleDrawer = (newOpen: boolean) => () => {
-        setOpen(newOpen);
-    };
+    // // Drawer
+    // const [open, setOpen] = React.useState(false);
+    // const toggleDrawer = (newOpen: boolean) => () => {
+    //     setOpen(newOpen);
+    // };
 
-    const DrawerList = (
-        <Box
-            sx={{ width: 250 }}
-            role="presentation"
-            onClick={toggleDrawer(false)}
-        >
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        component="div"
-                        sx={{
-                            flexGrow: 1,
-                            color: '#fff',
-                            cursor: 'pointer',
-                            marginLeft: '40px',
-                        }}
-                        onClick={() => navigate('/')}
-                    >
-                        Vevous
-                    </Typography>
-                </Toolbar>
-            </AppBar>
-            <List>
-                <ListItem key="Dashboard" disablePadding>
-                    <ListItemButton onClick={() => navigate('/')}>
-                        <ListItemText primary="Dashboard" />
-                    </ListItemButton>
-                </ListItem>
-                <ListItem key="Teams" disablePadding>
-                    <ListItemButton onClick={() => navigate('/teams')}>
-                        <ListItemText primary="Teams" />
-                    </ListItemButton>
-                </ListItem>
-            </List>
-        </Box>
-    );
+    // const DrawerList = (
+    //     <Box
+    //         sx={{ width: 250 }}
+    //         role="presentation"
+    //         onClick={toggleDrawer(false)}
+    //     >
+    //         <AppBar position="static">
+    //             <Toolbar>
+    //                 <Typography
+    //                     variant="h6"
+    //                     fontWeight="bold"
+    //                     component="div"
+    //                     sx={{
+    //                         flexGrow: 1,
+    //                         color: '#fff',
+    //                         cursor: 'pointer',
+    //                         marginLeft: '40px',
+    //                     }}
+    //                     onClick={() => navigate('/')}
+    //                 >
+    //                     Vevous
+    //                 </Typography>
+    //             </Toolbar>
+    //         </AppBar>
+    //         <List>
+    //             <ListItem key="Home" disablePadding>
+    //                 <ListItemButton onClick={() => navigate('/')}>
+    //                     <ListItemText primary="Home" />
+    //                 </ListItemButton>
+    //             </ListItem>
+    //             <ListItem key="Teams" disablePadding>
+    //                 <ListItemButton onClick={() => navigate('/teams')}>
+    //                     <ListItemText primary="Teams" />
+    //                 </ListItemButton>
+    //             </ListItem>
+    //         </List>
+    //     </Box>
+    // );
 
     return (
         <>
@@ -97,17 +90,17 @@ function NavBar() {
                 open={openPostModal}
                 handleClose={handleClosePostModal}
             />
-            <CreateTeamModal
+            {/* <CreateTeamModal
                 open={openCreateTeamModal}
                 handleClose={handleCloseCreateTeamModal}
-            />
+            /> */}
             <Box sx={{ width: '100%', height: '64px' }} />
             <AppBar position="fixed">
-                <Drawer open={open} onClose={toggleDrawer(false)}>
+                {/* <Drawer open={open} onClose={toggleDrawer(false)}>
                     {DrawerList}
-                </Drawer>
+                </Drawer> */}
                 <Toolbar>
-                    <IconButton
+                    {/* <IconButton
                         color="inherit"
                         aria-label="open drawer"
                         onClick={toggleDrawer(true)}
@@ -120,7 +113,7 @@ function NavBar() {
                         ]}
                     >
                         <MenuIcon />
-                    </IconButton>
+                    </IconButton> */}
                     <Typography
                         variant="h6"
                         fontWeight="bold"
@@ -146,7 +139,7 @@ function NavBar() {
                             </Button>
                         ) : (
                             <>
-                                <IconButton
+                                {/* <IconButton
                                     size="large"
                                     aria-label="account of current user"
                                     aria-controls="menu-appbar"
@@ -156,7 +149,7 @@ function NavBar() {
                                     sx={{ '&:focus': { outline: 'none' } }}
                                 >
                                     <Add />
-                                </IconButton>
+                                </IconButton> */}
                                 <IconButton
                                     size="large"
                                     aria-label="account of current user"
@@ -185,7 +178,12 @@ function NavBar() {
                                     open={Boolean(anchorEl)}
                                     onClose={handleClose}
                                 >
-                                    <MenuItem onClick={handleClose}>
+                                    <MenuItem
+                                        onClick={() => {
+                                            navigate('/profile');
+                                            handleClose();
+                                        }}
+                                    >
                                         Profile
                                     </MenuItem>
                                     <MenuItem

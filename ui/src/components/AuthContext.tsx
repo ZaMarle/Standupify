@@ -78,8 +78,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (jwt) {
             const t = new Token(jwt);
             setToken(t);
-            setIsLoading(false);
         }
+
+        setIsLoading(false);
     }, []);
 
     const signIn = (jwt: string) => {

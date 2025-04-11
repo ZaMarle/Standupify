@@ -1,22 +1,27 @@
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { useNavigate } from 'react-router-dom';
-import PageHeader from '../components/PageHeader';
 import Team from '../models/Team';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../components/AuthContext';
 import ApiClient from '../dataAccess/ApiClient';
+import {
+    IconButton,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+} from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Add } from '@mui/icons-material';
+import CreateTeamModal from './CreateTeamModal';
 
-function TeamsPage() {
+function UserTeamsTable() {
     const navigate = useNavigate();
     const authContext = useAuth();
 
     const [teams, setTeams] = useState<Array<Team>>([]);
+
     useEffect(() => {
         const fetchTeams = async () => {
             const apiClient = new ApiClient(authContext);
@@ -43,34 +48,61 @@ function TeamsPage() {
         fetchTeams();
     }, [authContext]);
 
+    // CreateTeamModal
+    const [openCreateTeamModal, setOpenCreateTeamModal] = useState(false);
+    const handleOpenCreateTeamModal = () => setOpenCreateTeamModal(true);
+    const handleCloseCreateTeamModal = () => setOpenCreateTeamModal(false);
+
     return (
         <>
-            <PageHeader text="Teams" />
+            <CreateTeamModal
+                open={openCreateTeamModal}
+                handleClose={handleCloseCreateTeamModal}
+                handleCreate={(team: Team) => {
+                    const newTeams = teams;
+                    newTeams.push(team);
+                    setTeams(newTeams);
+                    handleCloseCreateTeamModal();
+                }}
+            />
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                     <TableHead>
                         <TableRow>
                             <TableCell>Name</TableCell>
                             <TableCell>Description</TableCell>
+                            <TableCell>
+                                <IconButton
+                                    aria-label="account of current user"
+                                    aria-controls="menu-appbar"
+                                    aria-haspopup="true"
+                                    onClick={handleOpenCreateTeamModal}
+                                    color="default"
+                                    sx={{ '&:focus': { outline: 'none' } }}
+                                >
+                                    <Add />
+                                </IconButton>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {teams.map((team) => (
                             <TableRow
                                 hover
-                                key={team.name}
+                                key={team.id}
                                 sx={{
                                     cursor: 'pointer',
                                     '&:last-child td, &:last-child th': {
                                         border: 0,
                                     },
                                 }}
-                                onClick={() => navigate(`${team.id}`)}
+                                onClick={() => navigate(`/team/${team.id}`)}
                             >
                                 <TableCell component="th" scope="row">
                                     {team.name}
                                 </TableCell>
                                 <TableCell>{team.description}</TableCell>
+                                <TableCell sx={{ width: 0 }}></TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
@@ -80,4 +112,4 @@ function TeamsPage() {
     );
 }
 
-export default TeamsPage;
+export default UserTeamsTable;

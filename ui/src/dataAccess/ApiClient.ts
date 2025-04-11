@@ -131,7 +131,7 @@ export default class ApiClient {
         create: (team: ICreateTeamForm) =>
             this.request('/teams', RequestMethod.POST, JSON.stringify(team)),
         delete: (teamId: number) =>
-            this.request(`/teams/${teamId}/delete`, RequestMethod.DELETE),
+            this.request(`/teams/${teamId}`, RequestMethod.DELETE),
         removeUser: (userId: number) =>
             this.request(`/teams/${userId}/removeUser`, RequestMethod.GET),
         transferOwnership: (userId: number) =>
