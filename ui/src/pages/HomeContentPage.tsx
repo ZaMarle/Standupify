@@ -1,34 +1,254 @@
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import Standup from '../models/Standup';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import {
+    Box,
+    Button,
+    Card,
+    CardContent,
+    Checkbox,
+    FormControl,
+    InputLabel,
+    ListItemText,
+    MenuItem,
+    OutlinedInput,
+    Select,
+    Typography,
+} from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useAuth } from '../components/AuthContext';
+import { useEffect, useState } from 'react';
+import Team from '../models/Team';
+import ApiClient from '../dataAccess/ApiClient';
+import { Controller, useForm } from 'react-hook-form';
+import IFilterStandupsForm from '../interfaces/IFilterStandupsForm';
+import dayjs from 'dayjs';
+import User from '../models/User';
 
 function HomeContentPage() {
-    const standups = [
-        new Standup(
-            1,
-            'Zac Marley',
-            new Date(),
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Nihil amet harum quia impedit magni voluptatum esse veritatis, ipsa ratione fuga blanditiis deleniti corporis fugit expedita?',
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Sunt, accusantium?',
-            'none im a beast',
-        ),
-        new Standup(
-            2,
-            'Zac Marley',
-            new Date(),
-            'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nulla harum blanditiis architecto earum. Consequuntur magnam perferendis fugiat omnis hic, quidem at laudantium quod harum tempore beatae. Illum, aliquid minus explicabo rem eius deserunt molestiae ducimus nulla fuga harum quos labore dolore sit neque ratione, nostrum accusantium! Porro impedit vel eum, iste, officiis necessitatibus omnis voluptate sit aperiam cupiditate quia ipsum? Optio perferendis obcaecati nostrum maiores eveniet quam voluptatem harum reiciendis.',
-            'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Distinctio, veritatis suscipit quidem perspiciatis et incidunt quos culpa, asperiores, est dicta esse commodi fugit hic ex repellendus sunt velit quisquam consectetur. Voluptatem vel voluptas autem impedit commodi enim recusandae blanditiis, debitis expedita dolores dolorum rerum id fugiat modi aut cumque. Harum nam neque nobis nihil dignissimos cum, eos, repellendus ipsa quidem voluptatum facere? Vitae blanditiis mollitia itaque labore natus ratione tempora, iure architecto nulla soluta voluptatum, quis nesciunt est corporis dolore provident possimus dolores modi ad. Dicta nostrum voluptatibus velit dolorem?',
-            'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas maxime, iste, dolore itaque explicabo harum perferendis ex doloremque nam minus illum ratione.',
-        ),
-    ];
+    const authContext = useAuth();
+
+    // Filter form
+    const filterForm = useForm<IFilterStandupsForm>();
+    const filterFormTeamIds = filterForm.watch('teamIds');
+
+    const onSubmit = async (data: IFilterStandupsForm) => {
+        console.log('submit');
+
+        getStandups(data);
+    };
+
+    // Fetch standups
+    const [standups, setStandups] = useState<Array<Standup>>([]);
+    useEffect(() => {
+        getStandups(filterForm.getValues());
+    }, []);
+
+    const getStandups = (data: IFilterStandupsForm) => {
+        const fetchStandups = async () => {
+            const apiClient = new ApiClient(authContext);
+
+            const res = await apiClient.standups.list(data);
+            console.log(res);
+            const resJson = await res.json();
+            console.log(resJson);
+
+            const standups: Array<Standup> = resJson.map((t: any) => ({
+                id: t.id,
+                yesterday: t.yesterday,
+                today: t.today,
+                blockers: t.blockers,
+                createdBy: 'string',
+                createdDate: new Date(),
+            }));
+
+            setStandups(standups);
+        };
+
+        fetchStandups();
+    };
+
+    // Fetch teams for dropdown
+    const [teams, setTeams] = useState<Array<Team>>([]);
+    useEffect(() => {
+        const fetchTeams = async () => {
+            const apiClient = new ApiClient(authContext);
+            const userId = authContext.token?.userId;
+            if (!userId) return;
+
+            const getTeamsRes = await apiClient.users.getTeams(userId);
+            if (!getTeamsRes.ok)
+                throw new Error('Failed to perform: apiClient.users.getTeams');
+
+            const teamsJson = await getTeamsRes.json();
+
+            const teams: Array<Team> = teamsJson.map((t: any) => ({
+                id: t.team.id,
+                name: t.team.name,
+                description: t.team.description,
+                createdById: t.team.createdById,
+                createdDate: t.team.createdDate,
+            }));
+
+            setTeams(teams);
+        };
+
+        fetchTeams();
+    }, [authContext]);
+
+    // Fetch users from dropdown
+    const [users, setUsers] = useState<Array<User>>([]);
+    useEffect(() => {
+        const fetchUsers = async () => {
+            // I want to get all the users in the teams that this user is in
+            if (teams.length == 0) {
+                return;
+            }
+
+            let teamsToSearch: Array<number> = [];
+
+            if (filterFormTeamIds && filterFormTeamIds.length > 0) {
+                teamsToSearch = filterFormTeamIds;
+            } else {
+                teamsToSearch = teams.map((t) => t.id);
+            }
+
+            const apiClient = new ApiClient(authContext);
+            const res = await apiClient.teams.getMembers(teamsToSearch);
+            const teamMembersJson = await res.json();
+
+            const fetchedUsers: Array<User> = [];
+            teamMembersJson.forEach((tm: any) => {
+                if (fetchedUsers.some((u) => u.id == tm.user.id)) {
+                    return;
+                }
+
+                const user = {
+                    id: tm.user.id,
+                    firstName: tm.user.firstName,
+                    lastName: tm.user.lastName,
+                    email: '',
+                };
+
+                fetchedUsers.push(user);
+            });
+
+            setUsers(fetchedUsers);
+        };
+
+        fetchUsers();
+    }, [teams, filterFormTeamIds]);
 
     return (
         <>
             <Box sx={{ mb: 2 }}>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DatePicker />
-                </LocalizationProvider>
+                <form
+                    onSubmit={filterForm.handleSubmit(onSubmit)}
+                    style={{ width: '100%' }}
+                >
+                    <Controller
+                        name="date"
+                        control={filterForm.control}
+                        defaultValue={new Date()}
+                        render={({ field }) => (
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker
+                                    {...field}
+                                    value={
+                                        field.value ? dayjs(field.value) : null
+                                    }
+                                    onChange={(date) => field.onChange(date)}
+                                />
+                            </LocalizationProvider>
+                        )}
+                    />
+                    <FormControl sx={{ mt: 2, width: '100%' }}>
+                        <InputLabel id="teams-label">Teams</InputLabel>
+                        <Controller
+                            name="teamIds"
+                            control={filterForm.control}
+                            defaultValue={[]}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    labelId="teams-label"
+                                    id="teams-checkbox"
+                                    multiple
+                                    input={<OutlinedInput label="Tag" />}
+                                    renderValue={(selected) =>
+                                        teams
+                                            .filter((t) =>
+                                                selected.includes(t.id),
+                                            )
+                                            .map((t) => t.name)
+                                            .join(', ')
+                                    }
+                                >
+                                    {teams.map((team) => (
+                                        <MenuItem key={team.id} value={team.id}>
+                                            <Checkbox
+                                                checked={field.value.includes(
+                                                    team.id,
+                                                )}
+                                            />
+                                            <ListItemText primary={team.name} />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            )}
+                        />
+                    </FormControl>
+                    <FormControl sx={{ mt: 2, width: '100%' }}>
+                        <InputLabel id="demo-multiple-checkbox-label">
+                            Users
+                        </InputLabel>
+                        <Controller
+                            name="userIds"
+                            control={filterForm.control}
+                            defaultValue={[]}
+                            render={({ field }) => (
+                                <Select
+                                    {...field}
+                                    labelId="demo-multiple-checkbox-label"
+                                    id="demo-multiple-checkbox"
+                                    multiple
+                                    input={<OutlinedInput label="Tag" />}
+                                    renderValue={(selected) =>
+                                        users
+                                            .filter((u) =>
+                                                selected.includes(u.id),
+                                            )
+                                            .map(
+                                                (u) =>
+                                                    `${u.firstName} ${u.lastName}`,
+                                            )
+                                            .join(', ')
+                                    }
+                                >
+                                    {users.map((user) => (
+                                        <MenuItem key={user.id} value={user.id}>
+                                            <Checkbox
+                                                checked={field.value.includes(
+                                                    user.id,
+                                                )}
+                                            />
+                                            <ListItemText
+                                                primary={`${user.firstName} ${user.lastName}`}
+                                            />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            )}
+                        />
+                    </FormControl>
+                    <Button
+                        sx={{ mt: 2 }}
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                    >
+                        Search
+                    </Button>
+                </form>
             </Box>
             {standups.map((standup) => (
                 <Card sx={{ width: '100%', mb: 2 }} key={standup.id}>

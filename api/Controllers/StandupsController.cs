@@ -9,6 +9,7 @@ using api.Infrastructure.Entities;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace api.Controllers;
@@ -33,10 +34,37 @@ public class Standups : Controller
     }
 
     [Authorize]
-    [HttpGet("/list")]
-    public Task<IActionResult> List()
+    [HttpGet("items")]
+    public async Task<IActionResult> GetItems(
+        [FromQuery] DateTime date,
+        [FromQuery] string teams,
+        [FromQuery] string userId)
     {
-        throw new NotImplementedException();
+        // You might receive `teams` as a string like "[12,21]"
+        // Parse it into a list of integers
+        var teamIds = System.Text.Json.JsonSerializer.Deserialize<List<int>>(teams);
+
+        var standups = _vevousDbContext.Standups.AsQueryable();
+
+        if (date != DateTime.MinValue)
+        {
+            standups = standups
+                .Where(s => s.CreatedDate == date);
+        }
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            var usersStandups = await standups
+                .Where(s => s.CreatedById.ToString() == userId)
+                .ToListAsync();
+
+            return Ok(usersStandups);
+        }
+
+        var standups1 = standups.ToList();
+
+        return await Task.FromResult<IActionResult>(Ok(standups.ToList()));
+
     }
 
     [Authorize]

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.Json;
 using api.Infrastructure;
 using api.Infrastructure.Entities;
 using api.Models;
@@ -21,7 +22,7 @@ public class TeamsController : Controller
 
 
     [Authorize]
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
         var team = await _vevousDbContext.Teams.FindAsync(id);
@@ -35,21 +36,29 @@ public class TeamsController : Controller
     }
 
     [Authorize]
-    [HttpGet("{id}/Members")]
-    public async Task<IActionResult> GetTeamMemberships(int id)
+    [HttpGet("members")]
+    public async Task<IActionResult> GetTeamMemberships([FromQuery] string teams)
     {
-        bool teamExists = await _vevousDbContext.Teams.AnyAsync(t => t.Id == id);
-        if (!teamExists)
-        {
-            return NotFound();
-        }
+        if (string.IsNullOrWhiteSpace(teams))
+            return BadRequest("Query params 'teams' not defined");
 
-        var members = await _vevousDbContext.TeamsMemberships
-            .Where(tm => tm.TeamId == id)
+        var teamIds = JsonSerializer.Deserialize<List<int>>(teams);
+        if (teamIds == null)
+            return NotFound();
+
+        var existingTeams = await _vevousDbContext.Teams
+            .Where(t => teamIds.Contains(t.Id))
+            .Select(t => t.Id)
+            .ToListAsync();
+        if (existingTeams.Count != teamIds.Count)
+            return NotFound("One or more team IDs not found");
+
+        var teamMembers = await _vevousDbContext.TeamsMemberships
+            .Where(tm => teamIds.Contains(tm.TeamId))
             .Include(tm => tm.User)
             .ToListAsync();
 
-        return Ok(members);
+        return Ok(teamMembers);
     }
 
     [Authorize]

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using api.Infrastructure;
@@ -11,9 +12,11 @@ using api.Infrastructure;
 namespace api.Migrations
 {
     [DbContext(typeof(VevousDbContext))]
-    partial class VevousDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250412102544_AddRequiredToCreatedById")]
+    partial class AddRequiredToCreatedById
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,6 +65,9 @@ namespace api.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
@@ -80,6 +86,8 @@ namespace api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("CreatedByUserId");
 
                     b.ToTable("Standup", (string)null);
                 });
@@ -209,11 +217,15 @@ namespace api.Migrations
 
             modelBuilder.Entity("api.Infrastructure.Entities.Standup", b =>
                 {
-                    b.HasOne("api.Infrastructure.Entities.User", "CreatedByUser")
+                    b.HasOne("api.Infrastructure.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("api.Infrastructure.Entities.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId");
 
                     b.Navigation("CreatedByUser");
                 });

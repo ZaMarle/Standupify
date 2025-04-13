@@ -152,15 +152,13 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
                                     id="demo-multiple-checkbox"
                                     multiple
                                     input={<OutlinedInput label="Tag" />}
-                                    renderValue={
-                                        (selected) =>
-                                            teams
-                                                .filter((t) =>
-                                                    selected.includes(t.id),
-                                                )
-                                                .map((t) => t.name)
-                                                .join(', ')
-                                        // selected.join(', ')
+                                    renderValue={(selected) =>
+                                        teams
+                                            .filter((t) =>
+                                                selected.includes(t.id),
+                                            )
+                                            .map((t) => t.name)
+                                            .join(', ')
                                     }
                                 >
                                     {teams.map((team) => (

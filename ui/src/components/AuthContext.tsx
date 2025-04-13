@@ -20,7 +20,6 @@ class Token {
 
         try {
             const decodedToken = JSON.parse(atob(rawToken.split('.')[1]));
-            console.log('Decoded Token:', decodedToken);
             this.userId =
                 decodedToken[
                     'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'
@@ -33,8 +32,6 @@ class Token {
             this.aud = decodedToken['aud'];
             this.exp = decodedToken['exp'];
             this.iss = decodedToken['iss'];
-
-            console.log(this);
         } catch (error) {
             console.error('Failed to decode token:', error);
 
@@ -84,10 +81,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }, []);
 
     const signIn = (jwt: string) => {
-        console.log('Signing in user');
-
         const t = new Token(jwt);
-        console.log(t);
         setToken(t);
 
         localStorage.setItem('jwt', jwt); // Store token in localStorage

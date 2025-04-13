@@ -97,7 +97,7 @@ public class VevousDbContext : DbContext
 
             entity.Property(e => e.CreatedById)
                 .IsRequired();
-            entity.HasOne<User>()
+            entity.HasOne(e => e.CreatedByUser)
                 .WithMany()
                 .HasForeignKey(a => a.CreatedById)
                 .OnDelete(DeleteBehavior.Cascade);

@@ -2,6 +2,7 @@ import { IAuthContext } from '../components/AuthContext';
 import ICreateStandupForm from '../interfaces/ICreateStandupForm';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
 import ICreateUserForm from '../interfaces/ICreateUserForm';
+import IFilterStandupsForm from '../interfaces/IFilterStandupsForm';
 import ISignInForm from '../interfaces/ISignInForm';
 import IQuery from './IQuery';
 import { RequestMethod } from './RequestMethod';
@@ -112,8 +113,11 @@ export default class ApiClient {
     standups = {
         get: (standupId: number) =>
             this.request(`/standups/${standupId}`, RequestMethod.GET),
-        list: () => {
-            throw new Error('Not implemented');
+        list: (data: IFilterStandupsForm) => {
+            return this.request(
+                `/standups/items?date=&teams=[${data.teamIds.join(',')}]&users=[${data.userIds.join(',')}]`,
+                RequestMethod.GET,
+            );
         },
         create: (standup: ICreateStandupForm) =>
             this.request(
@@ -126,8 +130,11 @@ export default class ApiClient {
     teams = {
         get: (teamId: number) =>
             this.request(`/teams/${teamId}`, RequestMethod.GET),
-        getMembers: (teamId: number) =>
-            this.request(`/teams/${teamId}/members`, RequestMethod.GET),
+        getMembers: (teamIds: Array<number>) =>
+            this.request(
+                `/teams/members?teams=[${teamIds.join(',')}]`,
+                RequestMethod.GET,
+            ),
         create: (team: ICreateTeamForm) =>
             this.request('/teams', RequestMethod.POST, JSON.stringify(team)),
         delete: (teamId: number) =>

@@ -71,7 +71,7 @@ function UserTeamsTable() {
                         <TableRow>
                             <TableCell>Name</TableCell>
                             <TableCell>Description</TableCell>
-                            <TableCell>
+                            <TableCell sx={{ width: '1%' }}>
                                 <IconButton
                                     aria-label="account of current user"
                                     aria-controls="menu-appbar"

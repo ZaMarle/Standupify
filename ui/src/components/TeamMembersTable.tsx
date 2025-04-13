@@ -27,7 +27,7 @@ function TeamMembersTable({ teamId }: ITeamMembersTableProps) {
     useEffect(() => {
         const fetchMembers = async () => {
             const apiClient = new ApiClient(authContext);
-            const res = await apiClient.teams.getMembers(teamId);
+            const res = await apiClient.teams.getMembers([teamId]);
             if (!res.ok)
                 throw new Error(
                     'Failed to perform: apiClient.teams.getMembers',
