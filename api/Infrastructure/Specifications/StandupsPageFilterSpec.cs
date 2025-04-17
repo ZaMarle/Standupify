@@ -30,9 +30,14 @@ public class StandupsPageFilterSpec : IStandupsPageFilterSpec
             throw new ArgumentException("standupTeam Standups not set");
         }
 
-        if (standupTeam.Standup.CreatedDate != Date && Date != default(DateTime))
+        var dateRangeEnd = Date.AddDays(1);
+        if (Date != default)
         {
-            return false;
+            if (standupTeam.Standup.CreatedDate < Date
+                || standupTeam.Standup.CreatedDate > dateRangeEnd)
+            {
+                return false;
+            }
         }
 
         if (!TeamIds.Contains(standupTeam.TeamId) && TeamIds.Count != 0)

@@ -28,12 +28,16 @@ function HomeContentPage() {
     const authContext = useAuth();
 
     // Filter form
-    const filterForm = useForm<IFilterStandupsForm>();
+    const filterForm = useForm<IFilterStandupsForm>({
+        defaultValues: {
+            date: new Date(),
+        },
+    });
     const filterFormTeamIds = filterForm.watch('teamIds');
 
     const onSubmit = async (data: IFilterStandupsForm) => {
         console.log('submit');
-
+        console.log(data);
         getStandups(data);
     };
 
@@ -105,7 +109,7 @@ function HomeContentPage() {
     const [users, setUsers] = useState<Array<User>>([]);
     useEffect(() => {
         const fetchUsers = async () => {
-            // I want to get all the users in the teams that this user is in
+            // I want to get all the users in the selected teams
             if (teams.length == 0) {
                 return;
             }
@@ -142,7 +146,7 @@ function HomeContentPage() {
         };
 
         fetchUsers();
-    }, [teams, filterFormTeamIds]);
+    }, [teams, filterFormTeamIds, authContext]);
 
     return (
         <>
@@ -154,7 +158,6 @@ function HomeContentPage() {
                     <Controller
                         name="date"
                         control={filterForm.control}
-                        defaultValue={new Date()}
                         render={({ field }) => (
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker

@@ -115,7 +115,7 @@ export default class ApiClient {
             this.request(`/standups/${standupId}`, RequestMethod.GET),
         list: (data: IFilterStandupsForm) => {
             return this.request(
-                `/standups/items?date=&teams=[${data.teamIds.join(',')}]&users=[${data.userIds.join(',')}]`,
+                `/standups/items?date=${data.date.toISOString()}&teams=[${data.teamIds.join(',')}]&users=[${data.userIds.join(',')}]`,
                 RequestMethod.GET,
             );
         },

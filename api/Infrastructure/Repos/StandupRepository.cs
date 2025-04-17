@@ -20,7 +20,7 @@ public class StandupRepository : IStandupRepository
     public StandupRepository(
         VevousDbContext vevousDbContext,
         IHttpContextAccessor httpContextAccessor,
-        ILogger <StandupRepository> logger)
+        ILogger<StandupRepository> logger)
     {
         _vevousDbContext = vevousDbContext;
         _httpContextAccessor = httpContextAccessor;
@@ -49,33 +49,9 @@ public class StandupRepository : IStandupRepository
             .ToList()
             .Where(st => getStandupsSpec.IsSatisfiedBy(st))
             .Select(st => st.Standup)
+            .Distinct()
             .ToList();
 
-        //var s = standups
-        //    .Select(st => st.Standup)
-        //    .ToList();
-
         return Result<IEnumerable<Standup>>.Ok(standups);
-
-        // var userStandupIds = new List<int>();
-        // foreach (var ut in userTeams)
-        // {
-        //     await _vevousDbContext.StandupsTeams
-        //         .Where(st => st.TeamId == ut)
-        //         .Select(st => st.Id)
-        //         .ForEachAsync(st =>
-        //         {
-        //             if (!userStandupIds.Contains(st))
-        //             {
-        //                 userStandupIds.Add(st);
-        //             }
-        //         });
-        // }
-
-        // var standups = await _vevousDbContext.Standups
-        //     .Where(st => userStandupIds.Contains(st.Id) && getStandupsSpec.IsSatisfiedBy(st))
-        //     .ToListAsync();
-
-        // return Result<IEnumerable<Standup>>.Ok(standups);
     }
 }
