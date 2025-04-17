@@ -17,9 +17,9 @@ public class Result<T>
         return new Result<T>(value, default!, true);
     }
 
-    public static Result<Unit> Err(string error)
+    public static Result<T> Err(string error)
     {
-        return new Result<Unit>(default!, error, false);
+        return new Result<T>(default!, error, false);
     }
 
     public bool IsOk()

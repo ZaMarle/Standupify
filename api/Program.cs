@@ -9,6 +9,10 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Adds logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+
 // Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -36,10 +40,15 @@ var connectionString = builder.Configuration.GetConnectionString("VevousDb").Rep
 // Add services to the container.
 builder.Services.AddDbContext<VevousDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddTransient<ITeamMembershipsRepository, TeamMembershipsRepository>();
 builder.Services.AddTransient<IUsersRepository, UsersRepository>();
 builder.Services.AddTransient<ITeamsRepository, TeamsRepository>();
 builder.Services.AddTransient<ITeamMembershipsRepository, TeamMembershipsRepository>();
+builder.Services.AddTransient<IStandupRepository, StandupRepository>();
+
 builder.Services.AddTransient<JwtService, JwtService>(sp => new JwtService(builder.Configuration["Jwt:Key"]));
 
 // Add CORS policy

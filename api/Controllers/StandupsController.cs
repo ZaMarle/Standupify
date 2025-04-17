@@ -6,6 +6,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using api.Infrastructure;
 using api.Infrastructure.Entities;
+using api.Infrastructure.Repos;
+using api.Infrastructure.Specifications;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,15 +17,20 @@ using Microsoft.Extensions.Logging;
 namespace api.Controllers;
 
 [Route("[controller]")]
-public class Standups : Controller
+public class StandupsController : Controller
 {
-    private readonly ILogger<Standups> _logger;
+    private readonly ILogger<StandupsController> _logger;
     private readonly VevousDbContext _vevousDbContext;
+    private readonly IStandupRepository _standupRepository;
 
-    public Standups(ILogger<Standups> logger, VevousDbContext vevousDbContext)
+    public StandupsController(
+        ILogger<StandupsController> logger,
+        VevousDbContext vevousDbContext,
+        IStandupRepository standupRepository)
     {
         _logger = logger;
         _vevousDbContext = vevousDbContext;
+        _standupRepository = standupRepository;
     }
 
     [Authorize]
@@ -38,33 +45,17 @@ public class Standups : Controller
     public async Task<IActionResult> GetItems(
         [FromQuery] DateTime date,
         [FromQuery] string teams,
-        [FromQuery] string userId)
+        [FromQuery] string users)
     {
-        // You might receive `teams` as a string like "[12,21]"
-        // Parse it into a list of integers
-        var teamIds = System.Text.Json.JsonSerializer.Deserialize<List<int>>(teams);
+        var teamIds = System.Text.Json.JsonSerializer.Deserialize<List<int>>(teams) ?? [];
+        var userIds = System.Text.Json.JsonSerializer.Deserialize<List<int>>(users) ?? [];
 
-        var standups = _vevousDbContext.Standups.AsQueryable();
+        var standups = await _standupRepository.Get(new StandupsPageFilterSpec(date, teamIds, userIds));
 
-        if (date != DateTime.MinValue)
-        {
-            standups = standups
-                .Where(s => s.CreatedDate == date);
-        }
-
-        if (!string.IsNullOrEmpty(userId))
-        {
-            var usersStandups = await standups
-                .Where(s => s.CreatedById.ToString() == userId)
-                .ToListAsync();
-
-            return Ok(usersStandups);
-        }
-
-        var standups1 = standups.ToList();
-
-        return await Task.FromResult<IActionResult>(Ok(standups.ToList()));
-
+        return standups.Match<IActionResult>(
+            ok: s => Ok(s),
+            err: _ => BadRequest()
+        );
     }
 
     [Authorize]

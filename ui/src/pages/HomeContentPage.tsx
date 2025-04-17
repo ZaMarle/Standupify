@@ -49,6 +49,10 @@ function HomeContentPage() {
 
             const res = await apiClient.standups.list(data);
             console.log(res);
+
+            if (!res.ok)
+                throw new Error('Failed to perform: apiClient.standups.list');
+
             const resJson = await res.json();
             console.log(resJson);
 
@@ -60,6 +64,8 @@ function HomeContentPage() {
                 createdBy: 'string',
                 createdDate: new Date(),
             }));
+
+            console.log(standups);
 
             setStandups(standups);
         };
