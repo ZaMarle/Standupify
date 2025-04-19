@@ -30,7 +30,7 @@ function HomeContentPage() {
     // Filter form
     const filterForm = useForm<IFilterStandupsForm>({
         defaultValues: {
-            date: dayjs(),
+            date: dayjs('2025-04-18'),
         },
     });
 

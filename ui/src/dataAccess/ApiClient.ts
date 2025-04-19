@@ -7,6 +7,7 @@ import IFilterStandupsForm from '../interfaces/IFilterStandupsForm';
 import ISignInForm from '../interfaces/ISignInForm';
 import IQuery from './IQuery';
 import { RequestMethod } from './RequestMethod';
+import ICreateOrganizationForm from '../interfaces/ICreateOrganizationForm';
 
 let isRefreshing = false;
 let refreshQueue: {
@@ -109,6 +110,16 @@ export default class ApiClient {
                 RequestMethod.POST,
                 JSON.stringify(signInForm),
             ),
+    };
+
+    organizations = {
+        create: (organization: ICreateOrganizationForm) => {
+            this.request(
+                '/organization',
+                RequestMethod.POST,
+                JSON.stringify(organization),
+            );
+        },
     };
 
     standups = {

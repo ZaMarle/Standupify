@@ -12,9 +12,17 @@ public class VevousDbContext : DbContext
     public DbSet<Standup> Standups { get; set; }
     public DbSet<TeamMembership> TeamsMemberships { get; set; }
     public DbSet<StandupTeam> StandupsTeams { get; set; }
+    public DbSet<Organization> Organizations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Organization>(entity =>
+        {
+            // public record Organization(int? Id, string Name, int CreatedById, DateTimeOffset? CreatedDate);
+
+            entity.HasKey(e => e.Id);
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
