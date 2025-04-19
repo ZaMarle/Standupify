@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { IAuthContext } from '../components/AuthContext';
 import ICreateStandupForm from '../interfaces/ICreateStandupForm';
 import ICreateTeamForm from '../interfaces/ICreateTeamForm';
@@ -117,13 +118,8 @@ export default class ApiClient {
             if (!data.date) {
                 throw new Error('Date must be set');
             }
-            data.date.setHours(0, 0, 0, 0);
-            console.log(data.date.toLocaleDateString());
-            console.log(data.date.toLocaleTimeString());
-            console.log(data.date.toLocaleString());
-            console.log(data.date.toUTCString());
-            console.log(data.date.toISOString());
-            const requestUrl = `/standups/items?date=${data.date.toLocaleDateString()}&teams=[${data.teamIds.join(',')}]&users=[${data.userIds.join(',')}]`;
+            const date = dayjs(data.date).format('YYYY/MM/DD');
+            const requestUrl = `/standups/items?date=${date}&teams=[${data.teamIds.join(',')}]&users=[${data.userIds.join(',')}]`;
             console.log(requestUrl);
 
             return this.request(requestUrl, RequestMethod.GET);

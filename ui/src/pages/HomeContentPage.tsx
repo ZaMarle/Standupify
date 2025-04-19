@@ -30,14 +30,13 @@ function HomeContentPage() {
     // Filter form
     const filterForm = useForm<IFilterStandupsForm>({
         defaultValues: {
-            date: new Date(),
+            date: dayjs(),
         },
     });
+
     const filterFormTeamIds = filterForm.watch('teamIds');
 
     const onSubmit = async (data: IFilterStandupsForm) => {
-        console.log('submit');
-        console.log(data);
         getStandups(data);
     };
 
@@ -48,6 +47,8 @@ function HomeContentPage() {
     }, []);
 
     const getStandups = (data: IFilterStandupsForm) => {
+        console.log(data);
+
         const fetchStandups = async () => {
             const apiClient = new ApiClient(authContext);
 
@@ -161,11 +162,14 @@ function HomeContentPage() {
                         render={({ field }) => (
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
-                                    {...field}
-                                    value={
-                                        field.value ? dayjs(field.value) : null
+                                    value={dayjs(field.value)} // convert Date → Dayjs
+                                    onChange={
+                                        (date) =>
+                                            field.onChange(
+                                                date?.toDate() ?? null,
+                                            ) // convert Dayjs → Date
                                     }
-                                    onChange={(date) => field.onChange(date)}
+                                    format="DD/MM/YYYY"
                                 />
                             </LocalizationProvider>
                         )}

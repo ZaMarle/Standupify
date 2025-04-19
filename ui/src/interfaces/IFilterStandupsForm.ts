@@ -1,5 +1,7 @@
+import { Dayjs } from 'dayjs';
+
 export default interface IFilterStandupsForm {
-    date: Date;
+    date: Dayjs;
     teamIds: Array<number>;
     userIds: Array<number>;
 }
