@@ -5,7 +5,7 @@ public class Team
     public string Name { get; set; }
     public string Description { get; set; }
     public int CreatedById { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
 
     public Team(
         string name,

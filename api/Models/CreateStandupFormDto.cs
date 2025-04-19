@@ -4,4 +4,5 @@ public record CreateStandupFormDto(
     string Today,
     string Blockers,
     List<int> TeamIds,
-    int CreatedById);
+    int CreatedById,
+    string ClientTz);

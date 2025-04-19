@@ -19,6 +19,11 @@ import ApiClient from '../dataAccess/ApiClient';
 import Team from '../models/Team';
 import { useAuth } from './AuthContext';
 import { SnackMessages, useSnack } from './SnackContext';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 interface CreateStandupModalProps {
     open: boolean;
@@ -33,6 +38,9 @@ function CreateStandupModal({ open, handleClose }: CreateStandupModalProps) {
         useForm<ICreateStandupForm>();
 
     const onSubmit = async (data: ICreateStandupForm) => {
+        const clientTimeZone = dayjs.tz.guess();
+        data.clientTz = clientTimeZone;
+
         const apiClient = new ApiClient(authContext);
         const res = await apiClient.standups.create(data);
         if (!res.ok) {

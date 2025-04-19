@@ -85,15 +85,18 @@ public class VevousDbContext : DbContext
                 .ValueGeneratedOnAdd();
             entity.Property(e => e.Yesterday)
                 .IsRequired()
-                .HasMaxLength(255);
+                .HasMaxLength(1000);
             entity.Property(e => e.Today)
                 .IsRequired()
-                .HasMaxLength(255);
+                .HasMaxLength(1000);
             entity.Property(e => e.Blockers)
                 .IsRequired()
-                .HasMaxLength(255);
+                .HasMaxLength(1000);
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            entity.Property(e => e.CreatedDateTz)
+                .IsRequired()
+                .HasMaxLength(100);
 
             entity.Property(e => e.CreatedById)
                 .IsRequired();

@@ -43,6 +43,12 @@ public class StandupRepository : IStandupRepository
             .Select(tm => tm.TeamId)
             .ToListAsync();
 
+
+        var sts = _vevousDbContext.StandupsTeams
+            .Where(st => userTeams.Contains(st.TeamId))
+            .Include(st => st.Standup)
+            .ToList();
+
         var standups = _vevousDbContext.StandupsTeams
             .Where(st => userTeams.Contains(st.TeamId))
             .Include(st => st.Standup)

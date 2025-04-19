@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using api.Infrastructure;
 using api.Infrastructure.Entities;
 using api.Infrastructure.Repos;
@@ -11,8 +6,6 @@ using api.Infrastructure.Specifications;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace api.Controllers;
 
@@ -73,7 +66,8 @@ public class StandupsController : Controller
                 createStandupFormDto.Yesterday,
                 createStandupFormDto.Today,
                 createStandupFormDto.Blockers,
-                userId);
+                userId,
+                createStandupFormDto.ClientTz);
 
             await _vevousDbContext.AddAsync(standup);
             await _vevousDbContext.SaveChangesAsync();

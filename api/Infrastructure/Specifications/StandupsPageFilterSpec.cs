@@ -1,5 +1,6 @@
 
 using api.Infrastructure.Entities;
+using NodaTime;
 
 namespace api.Infrastructure.Specifications;
 public interface IStandupsPageFilterSpec
@@ -8,12 +9,12 @@ public interface IStandupsPageFilterSpec
 }
 public class StandupsPageFilterSpec : IStandupsPageFilterSpec
 {
-    public DateTime Date { get; set; }
+    public DateTimeOffset Date { get; set; }
     public List<int> TeamIds { get; set; }
     public List<int> UserIds { get; set; }
 
     public StandupsPageFilterSpec(
-        DateTime date,
+        DateTimeOffset date,
         List<int> teamIds,
         List<int> userIds
     )
@@ -30,11 +31,19 @@ public class StandupsPageFilterSpec : IStandupsPageFilterSpec
             throw new ArgumentException("standupTeam Standups not set");
         }
 
-        var dateRangeEnd = Date.AddDays(1);
         if (Date != default)
         {
-            if (standupTeam.Standup.CreatedDate < Date
-                || standupTeam.Standup.CreatedDate > dateRangeEnd)
+            var dateStart = Date.DateTime;
+            var dateEnd = dateStart.AddDays(1).AddTicks(-1);
+
+            var start = LocalDateTime.FromDateTime(Date.DateTime);
+            var end = LocalDateTime.FromDateTime(dateEnd);
+
+            var createdDateZoned = standupTeam.Standup.GetCreatedDateZoned();
+            if (createdDateZoned == null) throw new NullReferenceException("CreatedDateZoned undefined");
+            var createdLocal = createdDateZoned.Value.LocalDateTime;
+
+            if (createdLocal < start || createdLocal > end)
             {
                 return false;
             }

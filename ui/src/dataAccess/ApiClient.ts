@@ -114,10 +114,19 @@ export default class ApiClient {
         get: (standupId: number) =>
             this.request(`/standups/${standupId}`, RequestMethod.GET),
         list: (data: IFilterStandupsForm) => {
-            return this.request(
-                `/standups/items?date=${data.date.toISOString()}&teams=[${data.teamIds.join(',')}]&users=[${data.userIds.join(',')}]`,
-                RequestMethod.GET,
-            );
+            if (!data.date) {
+                throw new Error('Date must be set');
+            }
+            data.date.setHours(0, 0, 0, 0);
+            console.log(data.date.toLocaleDateString());
+            console.log(data.date.toLocaleTimeString());
+            console.log(data.date.toLocaleString());
+            console.log(data.date.toUTCString());
+            console.log(data.date.toISOString());
+            const requestUrl = `/standups/items?date=${data.date.toLocaleDateString()}&teams=[${data.teamIds.join(',')}]&users=[${data.userIds.join(',')}]`;
+            console.log(requestUrl);
+
+            return this.request(requestUrl, RequestMethod.GET);
         },
         create: (standup: ICreateStandupForm) =>
             this.request(

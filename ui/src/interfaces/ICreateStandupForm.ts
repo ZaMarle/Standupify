@@ -3,4 +3,5 @@ export default interface ICreateStandupForm {
     today: string;
     yesterday: string;
     teamIds: Array<number>;
+    clientTz: string;
 }
